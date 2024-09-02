@@ -44,17 +44,7 @@ const TechAnalysisResult = ({ techAnalysisResult, loading }) => {
                   Recommendation: {JSON.stringify(techAnalysisResult.summary.RECOMMENDATION, null, 2)}
                   <br />
                 </pre>
-              </Typography>
-              <Box sx={{ marginTop: 2 }}>
-                <Typography variant="subtitle1">Selected Indicators:</Typography>
-                <pre>
-                  RSI {JSON.stringify(techAnalysisResult.indicators.RSI, null, 2)} <br /> 
-                  BB.lower {JSON.stringify(techAnalysisResult.indicators['BB.lower'], null, 2)} <br />  
-                  BB.upper {JSON.stringify(techAnalysisResult.indicators['BB.upper'], null, 2)} <br />  
-                  BBPower {JSON.stringify(techAnalysisResult.indicators['BBPower'], null, 2)}
-                </pre>
-                
-              </Box>
+              </Typography>              
               <Box sx={{ marginTop: 2 }}>
                 <Typography variant="subtitle1">Indicators:</Typography>
                 <pre>{JSON.stringify(techAnalysisResult.indicators, null, 2)}</pre>

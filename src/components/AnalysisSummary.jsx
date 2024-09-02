@@ -41,7 +41,7 @@ const AnalysisSummary = ({ techAnalysisResult, tickerInterval, loading }) => {
     return (
       <Paper
         elevation={4}
-        sx={{ padding: 3, borderRadius: 2}}
+        sx={{ padding: 3, borderRadius: 2 }}
       >
         <Box>
           <CircularProgress />
@@ -78,17 +78,25 @@ const AnalysisSummary = ({ techAnalysisResult, tickerInterval, loading }) => {
       sx={{ padding: 3, borderRadius: 2, position: 'relative', overflow: 'hidden', height: '94%' }}
     >
       <Box>
-        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-          {techAnalysisResult.interval} {techAnalysisResult.ticker?.toUpperCase()}
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main', textAlign: 'center' }}>
+          {techAnalysisResult.ticker?.toUpperCase()}
         </Typography>
-        <Typography variant="subtitle1" gutterBottom>
+        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main', textAlign: 'center' }}>
+          {techAnalysisResult.interval}
+        </Typography>
+        <Typography variant="h5" gutterBottom sx={{ textAlign: 'center' }}>
           {formatDate(techAnalysisResult.timestamp)} <strong>{tickerInterval}</strong>
         </Typography>
         <Divider sx={{ mb: 2 }} />
-        {/* <Typography variant="h6" gutterBottom sx={{ color: 'text.secondary' }}>
-          Analyst: <strong>{tickerInfo.recommendationKey ? tickerInfo.recommendationKey.toUpperCase() : 'N/A'}</strong> ({tickerInfo.recommendationMean})
-        </Typography>
-        <Divider sx={{ mb: 3 }} /> */}
+        <pre>
+          RSI {JSON.stringify(techAnalysisResult.indicators.RSI, null, 2)} <br />
+          MACD.macd {JSON.stringify(techAnalysisResult.indicators['MACD.macd'], null, 2)} <br />
+          MACD.signal {JSON.stringify(techAnalysisResult.indicators['MACD.signal'], null, 2)} <br />
+          BB.lower {JSON.stringify(techAnalysisResult.indicators['BB.lower'], null, 2)} <br />
+          BB.upper {JSON.stringify(techAnalysisResult.indicators['BB.upper'], null, 2)} <br />
+          BBPower {JSON.stringify(techAnalysisResult.indicators['BBPower'], null, 2)}
+        </pre>
+        <Divider sx={{ mb: 2 }} />
 
         {techAnalysisResult.summary && (
           <AnalysisSection title="Indicators" data={techAnalysisResult.summary} icon={TrendingUpIcon} />
