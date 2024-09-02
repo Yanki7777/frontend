@@ -81,7 +81,7 @@ const Header = ({ getMarketAI, loading, selectedUniverse }) => {
   }, []);
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#2c3e50', marginBottom: '20px' }}>
+    <AppBar position="static" sx={{ backgroundColor: '#2c3e50', marginBottom: '10px' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>

@@ -38,8 +38,8 @@ import InsiderTrading from './components/InsiderTrading';
 import TechAnalysisResult from './components/DetailedTechAnalysis';
 import TickerInfo from './components/TickerInfo';
 import Trade from './components/Trade';
+import TickerRotator from './components/TickerRotator';
 import MarketAI from './components/MarketAI';
-//import Chat from './components/Chat';
 import ChatComponent from './components/ChatComponent';
 import AnalysisSummary from './components/AnalysisSummary';
 
@@ -231,11 +231,16 @@ function App() {
     }
   };
 
+
+  
+
   return (
     <>
       <Container maxWidth="xl" sx={{ marginTop: 3 }}>
 
-        <Header getMarketAI={handleMarketAI} loading={loading} selectedUniverse={selectedUniverse} />
+        <Header getMarketAI={handleMarketAI} loading={loading} selectedUniverse={selectedUniverse} />        
+        <TickerRotator />
+
 
         <div className='mainWrapper'>
           <Grid container spacing={2}>
