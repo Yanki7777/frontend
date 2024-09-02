@@ -1,0 +1,33 @@
+/* TickerInfo.css */
+
+.flash-green {
+    animation: flash-green-animation 1.5s ease-in-out;
+}
+
+.flash-red {
+    animation: flash-red-animation 1.5s ease-in-out;
+}
+
+@keyframes flash-green-animation {
+    0% {
+        background-color: #ffffff;
+    }
+    50% {
+        background-color: #ccffcc; /* Light green flash */
+    }
+    100% {
+        background-color: #ffffff;
+    }
+}
+
+@keyframes flash-red-animation {
+    0% {
+        background-color: #ffffff;
+    }
+    50% {
+        background-color: #ffcccc; /* Light red flash */
+    }
+    100% {
+        background-color: #ffffff;
+    }
+}

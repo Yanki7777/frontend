@@ -1,0 +1,125 @@
+* {
+  margin: 0;
+  padding: 0;
+  /* box-sizing: border-box; */
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f4f6f8;
+  color: #333;
+  /* line-height: 1.6; */
+  /* min-height: 100vh; */
+  /* display: flex;
+   justify-content: center; 
+  align-items: center; 
+  padding: 20px; */
+
+}
+
+/* Typography settings */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+/* Container for the entire app */
+#root {
+  /* width: 100%;
+  max-width: 2000px;
+  margin: 0 auto; */
+}
+
+/* Custom styles for form elements */
+input[type="text"], textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #1565c0;
+}
+
+/* Paper styling for containers */
+.MuiPaper-root {
+  padding: 20px;
+  border-radius: 8px;
+}
+
+/* Form container */
+form {
+  margin-bottom: 20px;
+}
+
+/* Alert styling */
+.MuiAlert-root {
+  margin-top: 20px;
+}
+
+/* Styling the output of JSON data */
+pre {
+  background-color: #f0f4f8;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  overflow-x: auto;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  button {
+    font-size: 0.9rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+}
+
+
+.ticker-card{
+  padding: 8px;
+}
+
+.ticker-card:hover{
+background-color: #43d397;
+color: white;
+}
+
+
+.MuiContainer-root{
+  max-width: 93vw !important;
+}
+
+.mainWrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap:10px;
+}
