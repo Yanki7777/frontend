@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { Alert, Box, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, Typography, Button } from '@mui/material';
 import axios from 'axios';
 import { baseUrl } from '../utils/config';
-
+import { Dialog, DialogTitle, DialogContent, DialogActions,  IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import UniInsiderTrading from './UniInsiderTrading';
 const SelectUniverse = ({ selectedUniverse, setSelectedUniverse, setTicker, setExchange, handleAnalyze }) => {
   const [universes, setUniverses] = useState([]);
   const [universe_tickers, setTickers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isClicked, setIsClicked] = useState(false);
-
+  const [isInsiderDialogOpen, setIsInsiderDialogOpen] = useState(false);
   useEffect(() => {
     const fetchUniverses = async () => {
       setLoading(true);
@@ -25,7 +27,9 @@ const SelectUniverse = ({ selectedUniverse, setSelectedUniverse, setTicker, setE
 
     fetchUniverses();
   }, []);
-
+  const handleInsiderDialogToggle = () => {
+    setIsInsiderDialogOpen(!isInsiderDialogOpen);
+  };
   const handleUniverseChange = (event) => {
     const selectedUniverseId = event.target.value;
     setSelectedUniverse(selectedUniverseId);
@@ -110,12 +114,44 @@ const SelectUniverse = ({ selectedUniverse, setSelectedUniverse, setTicker, setE
             <Button disabled={loading} variant="contained" color="secondary" sx={{ width: '30%' }}>
               Universe Volatility
             </Button>
-            <Button disabled={loading} variant="contained" color="secondary" sx={{ width: '30%' }}>
+            <Button disabled={loading} variant="contained" color="secondary" sx={{ width: '30%' }} onClick={()=>setIsInsiderDialogOpen(true)}>
               Insider Buyers
             </Button>
           </Box>
         </>
       )}
+          {/* Insider Trading Dialog */}
+          <Dialog
+        open={isInsiderDialogOpen}
+        onClose={()=>setIsInsiderDialogOpen(false)}
+        maxWidth="lg" // Adjust the max width to make it wider (options: 'xs', 'sm', 'md', 'lg', 'xl')
+        fullWidth // Ensures the dialog takes the full width as defined by maxWidth
+        sx={{ '& .MuiDialog-paper': { width: '55%', maxWidth: 'none' } }} // Further customize the width
+      >
+        <DialogTitle sx={{ fontSize: '2.5rem', textAlign: 'center'}}>
+          Universe Insider Buying (upto 3 months)
+          <IconButton
+            aria-label="close"
+            onClick={handleInsiderDialogToggle}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers sx={{ fontSize: '1.5rem' }}>
+          <UniInsiderTrading selectedUniverse={selectedUniverse} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleInsiderDialogToggle} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 };

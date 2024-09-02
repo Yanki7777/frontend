@@ -25,15 +25,23 @@ const NewsSentiment = ({ newsSentiment, ticker, loading }) => {
   
   if (loading) {
     return (
-      <Paper
-        elevation={4}
-        sx={{ padding: 3, borderRadius: 2}}
-      >
-        <Box>
-          <CircularProgress />
-
-        </Box>
-      </Paper>
+      <Box display="flex" sx={{ marginTop: 3, position: 'relative' }}>
+<Paper
+   elevation={4}
+   sx={{
+     padding: 3,
+     borderRadius: 2,
+     display: 'flex',
+     justifyContent: 'center',
+     alignItems: 'center',
+     width: '100%',
+     height: '100%',
+   }}
+ >
+   <CircularProgress />
+ </Paper>
+      </Box>
+   
     );
   }
 

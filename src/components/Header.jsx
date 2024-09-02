@@ -4,13 +4,11 @@ import {
   AppBar, Box, Toolbar, IconButton, Typography, Menu, MenuItem,
   Button, Avatar, Tooltip, Container, Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import { YAnalisysVersion, baseUrl } from '../utils/config';
-import UniInsiderTrading from './UniInsiderTrading';
 import About from './About';
-
+import { Snackbar } from '@mui/material';
 const leftPages = []; // Reserved for future use
-const rightPages = ['Insiders', 'Markets AI', 'Trade Settings', 'About'];
+const rightPages = ['Markets AI', 'Trade Settings', 'About'];
 const user_settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const Header = ({ getMarketAI, loading, selectedUniverse }) => {
@@ -20,7 +18,7 @@ const Header = ({ getMarketAI, loading, selectedUniverse }) => {
   const [isTradeSettingsDialogOpen, setIsTradeSettingsDialogOpen] = useState(false);
   const [isInsiderDialogOpen, setIsInsiderDialogOpen] = useState(false);
   const [nasdaqStatus, setNasdaqStatus] = useState(null);
-
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   // Toggle navigation menu
   const handleNavMenuToggle = (event) => {
     setAnchorElNav(prev => prev ? null : event.currentTarget);
@@ -33,7 +31,9 @@ const Header = ({ getMarketAI, loading, selectedUniverse }) => {
 
   // Toggle Trade Settings dialog
   const handleTradeSettingsDialogToggle = () => {
+    console.log('Trade Settings clicked');
     setIsTradeSettingsDialogOpen(prev => !prev);
+    setIsSnackbarOpen(true); // Show the Snackbar
   };
 
   // Toggle Insider Trading dialog
@@ -45,8 +45,8 @@ const Header = ({ getMarketAI, loading, selectedUniverse }) => {
   const handlePageClick = (page) => {
     setAnchorElNav(null); // Close the navigation menu
     switch (page) {
-      case 'Insiders':
-        handleInsiderDialogToggle(); // Toggle the Insiders dialog
+      case 'Trade Settings':
+        handleTradeSettingsDialogToggle();
         break;
       case 'Markets AI':
         getMarketAI(); // Trigger the Market AI functionality
@@ -200,40 +200,15 @@ const Header = ({ getMarketAI, loading, selectedUniverse }) => {
             </Menu>
           </Box>
         </Toolbar>
+        <Snackbar
+          open={isSnackbarOpen}
+          autoHideDuration={3000} // Snackbar will auto-hide after 3 seconds
+          onClose={() => setIsSnackbarOpen(false)}
+          message="Trade settings will be here soon"
+        />
       </Container>
 
-      {/* Insider Trading Dialog */}
-      <Dialog
-        open={isInsiderDialogOpen}
-        onClose={handleInsiderDialogToggle}
-        maxWidth="lg" // Adjust the max width to make it wider (options: 'xs', 'sm', 'md', 'lg', 'xl')
-        fullWidth // Ensures the dialog takes the full width as defined by maxWidth
-        sx={{ '& .MuiDialog-paper': { width: '55%', maxWidth: 'none' } }} // Further customize the width
-      >
-        <DialogTitle sx={{ fontSize: '2.5rem', textAlign: 'center'}}>
-          Universe Insider Buying (upto 3 months)
-          <IconButton
-            aria-label="close"
-            onClick={handleInsiderDialogToggle}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent dividers sx={{ fontSize: '1.5rem' }}>
-          <UniInsiderTrading selectedUniverse={selectedUniverse} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleInsiderDialogToggle} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+
     </AppBar>
   );
 };

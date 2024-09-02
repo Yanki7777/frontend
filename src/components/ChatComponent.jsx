@@ -13,7 +13,7 @@ function ChatComponent({ yfInfo, portfolio }) {
 
   const sendMessage = async () => {
     if (inputMessage.trim() === '') return;
-
+    console.log(portfolio,'portfolio');
     const response = await axios.post('http://localhost:5000/api/chat', { portfolio: portfolio, yfInfo: yfInfo, message: inputMessage });
     setMessages([...messages, { role: 'user', content: inputMessage }, { role: 'assistant', content: response.data.response }]);
     setInputMessage('');
@@ -40,7 +40,10 @@ function ChatComponent({ yfInfo, portfolio }) {
 
   return (
     <Container maxWidth="sm" className="chat-container">
-      <Paper elevation={3} className="messages-container">
+      <Paper elevation={3} className="messages-container" style={{
+        height:'80%',
+        overflowY: 'auto',
+      }}>
         {messages.map((msg, index) => (
           <Box
             key={index} className={`message ${msg.role}`} p={2} mb={1} borderRadius={1}>
