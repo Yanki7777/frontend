@@ -106,11 +106,8 @@ function TickerInfo({ ticker, yfInfo, fmpQuote, tickerRTData, loading }) {
                     fmp-quote
                 </Typography>
                 <Typography variant="body1" sx={{ fontSize: '1.3rem', marginBottom: 1, textAlign: 'center' }}>
-                    <strong>Price: </strong>{fmpQuote.fmp_quote.price}
-                    <br />
-                    <strong>Change: </strong>{fmpQuote.fmp_quote.change} ({fmpQuote.fmp_quote.changesPercentage.toFixed(2)}%)
-                    <br />
-                    <strong>At: </strong>{formattedDateTime(fmpQuote.fmp_quote.timestamp)}
+                    <strong>Price: </strong>{fmpQuote.fmp_quote.price} <strong>Change: </strong>{fmpQuote.fmp_quote.change} ({fmpQuote.fmp_quote.changesPercentage.toFixed(2)}%)<strong> <br />
+                     At: </strong>{formattedDateTime(fmpQuote.fmp_quote.timestamp)}
                 </Typography>
 
                 <Typography variant="body1" sx={{ fontSize: '1.3rem', marginBottom: 1, textAlign: 'center' }}>
@@ -127,17 +124,13 @@ function TickerInfo({ ticker, yfInfo, fmpQuote, tickerRTData, loading }) {
                     </Link>
                 </Typography>
                 <Typography variant="body1" sx={{ fontSize: '1.2rem', marginBottom: 1, textAlign: 'center' }}>
-                    <strong>Industry: </strong>{yfInfo.industry}
-                    <br />
-                    <strong>Sector: </strong>{yfInfo.sector}
+                    <strong>Industry: </strong>{yfInfo.industry}<strong> Sector: </strong>{yfInfo.sector}
                     <br />
                     <strong>MarketCap (B): </strong>{(yfInfo.marketCap / 1000000000).toFixed(3)}
                     <br />
                     <strong>Target Median Price: </strong>{yfInfo.targetMedianPrice}
                     <br />
-                    <strong>Trailing PE: </strong>{yfInfo.trailingPE}
-                    <br />
-                    <strong>Forward PE: </strong>{yfInfo.forwardPE}
+                    <strong>Trailing PE: </strong>{yfInfo.trailingPE}<strong> Forward PE: </strong>{yfInfo.forwardPE}
                 </Typography>
 
             </Box>

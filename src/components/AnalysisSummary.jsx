@@ -75,7 +75,7 @@ const AnalysisSummary = ({ techAnalysisResult, tickerInterval, loading }) => {
   return (
     <Paper
       elevation={4}
-      sx={{ padding: 3, borderRadius: 2, position: 'relative', overflow: 'hidden', height: '94%' }}
+      sx={{ padding: 1, borderRadius: 2, position: 'relative', overflow: 'hidden', height: '94%'}}
     >
       <Box>
         <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main', textAlign: 'center' }}>
