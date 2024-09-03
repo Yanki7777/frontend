@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography } from '@mui/material';
 import axios from 'axios';
 import { baseUrl } from '../utils/config';
+import './TickerRotator.css';
 
 const rTickers = ['SPY', 'QQQ', 'MSFT', 'AMZN', 'TSLA', 'NVDA', 'GBTC', 'ETHE', 'BTC-USD', 'ETH-USD'];
 
-const fetchTickerPrice = async (ticker) => {
+const fetchStockData = async (ticker) => {
     try {
         const response = await axios.post(`${baseUrl}/fmp-quote`, { ticker });
         const { price, change, changesPercentage, previousClose } = response.data.fmp_quote;
@@ -17,7 +18,7 @@ const fetchTickerPrice = async (ticker) => {
             previousClose: previousClose.toFixed(2)
         };
     } catch (error) {
-        console.error(`Error fetching ticker price for ${ticker}:`, error);
+        console.error(`Error fetching stock data for ${ticker}:`, error);
         return {
             price: "N/A",
             change: "N/A",
@@ -27,64 +28,85 @@ const fetchTickerPrice = async (ticker) => {
     }
 };
 
+const getPriceColor = (price, previousClose) => {
+    if (price === "N/A" || previousClose === "N/A") return '#ffffff';
+    return price > previousClose ? '#00ff00' : price < previousClose ? '#ff4040' : '#ffffff';
+};
+
 const TickerRotator = () => {
-    const [prices, setPrices] = useState({});
+    const [stockData, setStockData] = useState({});
+    const previousDataRef = useRef({}); // To keep track of previous data
+    const [flashTicker, setFlashTicker] = useState(null);
 
     useEffect(() => {
-        const updatePrices = async () => {
-            const newPrices = {};
+        const updateStockData = async () => {
+            const newStockData = {};
 
             for (let ticker of rTickers) {
-                newPrices[ticker] = await fetchTickerPrice(ticker);
+                newStockData[ticker] = await fetchStockData(ticker);
+
+                // Check if there's a change in data
+                if (
+                    previousDataRef.current[ticker] &&
+                    (
+                        newStockData[ticker].price !== previousDataRef.current[ticker].price ||
+                        newStockData[ticker].changesPercentage !== previousDataRef.current[ticker].changesPercentage
+                    )
+                ) {
+                    setFlashTicker(ticker);
+                    setTimeout(() => setFlashTicker(null), 500); // Remove flash effect after 500ms
+                }
             }
 
-            setPrices(newPrices);
+            previousDataRef.current = newStockData; // Update the previous data reference
+            setStockData(newStockData);
         };
 
-        updatePrices();
+        updateStockData();
+        const intervalId = setInterval(updateStockData, 10000);
 
-        const intervalId = setInterval(updatePrices, 10000);
         return () => clearInterval(intervalId);
     }, []);
+
+    const renderTickerBox = (ticker) => {
+        const data = stockData[ticker];
+        const priceColor = getPriceColor(data?.price, data?.previousClose);
+        const isFlashing = flashTicker === ticker;
+
+        return (
+            <Box
+                key={ticker}
+                sx={{
+                    margin: '0 20px',
+                    textAlign: 'center',
+                    minWidth: '100px',
+                    animation: isFlashing ? 'flash 0.5s ease' : 'none',
+                }}
+            >
+                <Typography
+                    variant="h6"
+                    sx={{
+                        fontSize: '1.2rem',
+                        fontWeight: 'bold',
+                        color: priceColor,
+                    }}
+                >
+                    {ticker}
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#ffffff' }}>
+                    Price: {data?.price || 'Loading...'}
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#ffffff' }}>
+                    Change: {data?.changesPercentage || 'Loading...'}%
+                </Typography>
+            </Box>
+        );
+    };
 
     return (
         <Box sx={{ backgroundColor: '#1c2833', padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
-                {rTickers.map((ticker) => (
-                    <Box key={ticker} sx={{ margin: '0 20px', textAlign: 'center', minWidth: '100px' }}>
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                fontSize: '1.2rem',
-                                fontWeight: 'bold',
-                                color:
-                                    prices[ticker]?.price !== "N/A" &&
-                                    prices[ticker]?.previousClose !== "N/A" &&
-                                    prices[ticker]?.price > prices[ticker]?.previousClose
-                                        ? '#00ff00' // Bright green for increase
-                                        : prices[ticker]?.price !== "N/A" &&
-                                          prices[ticker]?.previousClose !== "N/A" &&
-                                          prices[ticker]?.price < prices[ticker]?.previousClose
-                                            ? '#ff4040' // Bright red for decrease
-                                            : '#ffffff', // White for no change or loading
-                            }}
-                        >
-                            {ticker}
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            sx={{ color: '#ffffff' }}
-                        >
-                            Price: {prices[ticker]?.price || 'Loading...'}
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            sx={{ color: '#ffffff' }}
-                        >
-                            Change: {prices[ticker]?.changesPercentage || 'Loading...'}%
-                        </Typography>
-                    </Box>
-                ))}
+                {rTickers.map(renderTickerBox)}
             </Box>
         </Box>
     );

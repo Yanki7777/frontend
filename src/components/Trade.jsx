@@ -49,49 +49,62 @@ const Trade = ({ handleTrade, loading, portfolio, setTicker, setExchange, handle
 
   const hasTickers = portfolio?.tickers?.length > 0;
 
-  const downloadCSV = () => {
-    if (!hasTickers) return;
-  
-    const csvHeaders = [
-      'Ticker',
-      'Ind1',
-      'MA1',
-      'Osc1',
-      'RSI1',
-      'Ind2',
-      'MA2',
-      'Osc2',
-      'RSI2',
-      'Analyst',
-    ];
-  
-    const rows = portfolio.tickers.map(ticker_item => [
-      `${ticker_item.exchange}:${ticker_item.ticker}`,
-      ticker_item.ta_ind1_recommendation,
-      ticker_item.ta_ma1_recommendation,
-      ticker_item.ta_osc1_recommendation,
-      ticker_item.ta_rsi1,
-      ticker_item.ta_ind2_recommendation,
-      ticker_item.ta_ma2_recommendation,
-      ticker_item.ta_osc2_recommendation,
-      ticker_item.ta_rsi2,
-      ticker_item.analyst_recommendation,
-    ]);
-  
-    const csvContent = [csvHeaders, ...rows]
-      .map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))  // Escape commas and quotes
-      .join('\n');
-  
-    // Get the universe name and current date-time for the file name
-    const universeName = portfolio.universe || 'universe';
-    const dateTime = new Date().toISOString().replace(/[:]/g, '-').replace(/\..+/, ''); // Format: YYYY-MM-DDTHH-MM-SS
-  
-    console.log('portfolio', portfolio);
-    const fileName = `portfolio-${universeName}-${dateTime}.csv`;
-  
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, fileName);
-  };
+      const downloadCSV = () => {
+      if (!hasTickers) return;
+    
+      // Extract portfolio fields
+      const portfolioFields = [
+        ['Universe', portfolio.universe || 'universe'],
+        ['Timestamp', portfolio.creation_date || 'unknown'], // Use creation_date from portfolio
+        ['Interval1', portfolio.interval1],
+        ['Interval2', portfolio.interval2],
+        ['Stocks', portfolio.tickers.length],
+      ];
+    
+      const csvHeaders = [
+        'Exchange',
+        'Ticker',
+        'Ind1',
+        'MA1',
+        'Osc1',
+        'RSI1',
+        'Ind2',
+        'MA2',
+        'Osc2',
+        'RSI2',
+        'Analyst',
+      ];
+    
+      const rows = portfolio.tickers.map(ticker_item => [
+        ticker_item.exchange,
+        ticker_item.ticker,
+        ticker_item.ta_ind1_recommendation,
+        ticker_item.ta_ma1_recommendation,
+        ticker_item.ta_osc1_recommendation,
+        ticker_item.ta_rsi1,
+        ticker_item.ta_ind2_recommendation,
+        ticker_item.ta_ma2_recommendation,
+        ticker_item.ta_osc2_recommendation,
+        ticker_item.ta_rsi2,
+        ticker_item.analyst_recommendation,
+      ]);
+    
+      const csvContent = [
+        ...portfolioFields.map(field => field.join(',')), // Add portfolio fields
+        '', // Add an empty line to separate portfolio fields from headers
+        csvHeaders.join(','), // Add headers
+        ...rows.map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(',')) // Add rows
+      ].join('\n');
+    
+      // Get the universe name and creation date for the file name
+      const universeName = portfolio.universe || 'universe';
+      const creationDate = (portfolio.creation_date || 'unknown').replace(/[:]/g, '-').replace(/\..+/, ''); // Format: YYYY-MM-DDTHH-MM-SS
+    
+      const fileName = `portfolio-${universeName}-${creationDate}.csv`;
+    
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      saveAs(blob, fileName);
+    };
   
   return (
     <Paper elevation={3} sx={{ padding: 1, minHeight: '650px' , display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
