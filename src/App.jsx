@@ -156,8 +156,8 @@ function App() {
         axios.post(`${baseUrl}/fmp-quote`, { ticker }),
         axios.post(`${baseUrl}/fmp-real-time-price`, { ticker, exchange }),
         axios.post(`${baseUrl}/ticker-insider-trading`, { ticker, type: 'all' }),
-        axios.post(`${baseUrl}/tech_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval1 }),
-        axios.post(`${baseUrl}/tech_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval2 }),
+        axios.post(`${baseUrl}/tech_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval1, AI: false }),
+        axios.post(`${baseUrl}/tech_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval2, AI: false }),
         axios.post(`${baseUrl}/historical_data`, { ticker, period: "10y" }),
         axios.post(`${baseUrl}/news_sentiment`, { ticker }),
       ]);
