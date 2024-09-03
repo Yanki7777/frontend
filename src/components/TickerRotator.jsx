@@ -3,27 +3,36 @@ import { Box, Typography } from '@mui/material';
 import axios from 'axios';
 import { baseUrl } from '../utils/config';
 import './TickerRotator.css';
+import TickerModal from './TickerModal';
 
 const rTickers = ['SPY', 'QQQ', 'MSFT', 'AMZN', 'TSLA', 'NVDA', 'GBTC', 'ETHE', 'BTC-USD', 'ETH-USD'];
 
 const fetchStockData = async (ticker) => {
     try {
         const response = await axios.post(`${baseUrl}/fmp-quote`, { ticker });
-        const { price, change, changesPercentage, previousClose } = response.data.fmp_quote;
+        const { price, change, changesPercentage, previousClose, priceAvg50, timestamp, earningsAnnouncement } = response.data.fmp_quote;
 
         return {
+            ticker,
             price: price.toFixed(2),
             change: change.toFixed(2),
             changesPercentage: changesPercentage.toFixed(2),
-            previousClose: previousClose.toFixed(2)
+            previousClose: previousClose.toFixed(2),
+            priceAvg50: priceAvg50.toFixed(2),
+            timestamp: timestamp,
+            earningsAnnouncement: earningsAnnouncement,
         };
     } catch (error) {
         console.error(`Error fetching stock data for ${ticker}:`, error);
         return {
+            ticker,
             price: "N/A",
             change: "N/A",
             changesPercentage: "N/A",
-            previousClose: "N/A"
+            previousClose: "N/A",
+            priceAvg50: "N/A",
+            timestamp: "N/A",
+            earningsAnnouncement: "N/A"
         };
     }
 };
@@ -35,8 +44,10 @@ const getPriceColor = (price, previousClose) => {
 
 const TickerRotator = () => {
     const [stockData, setStockData] = useState({});
-    const previousDataRef = useRef({}); // To keep track of previous data
+    const previousDataRef = useRef({});
     const [flashTicker, setFlashTicker] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedTickerData, setSelectedTickerData] = useState(null);
 
     useEffect(() => {
         const updateStockData = async () => {
@@ -45,7 +56,6 @@ const TickerRotator = () => {
             for (let ticker of rTickers) {
                 newStockData[ticker] = await fetchStockData(ticker);
 
-                // Check if there's a change in data
                 if (
                     previousDataRef.current[ticker] &&
                     (
@@ -54,11 +64,11 @@ const TickerRotator = () => {
                     )
                 ) {
                     setFlashTicker(ticker);
-                    setTimeout(() => setFlashTicker(null), 500); // Remove flash effect after 500ms
+                    setTimeout(() => setFlashTicker(null), 500);
                 }
             }
 
-            previousDataRef.current = newStockData; // Update the previous data reference
+            previousDataRef.current = newStockData;
             setStockData(newStockData);
         };
 
@@ -67,6 +77,11 @@ const TickerRotator = () => {
 
         return () => clearInterval(intervalId);
     }, []);
+
+    const handleTickerClick = (ticker) => {
+        setSelectedTickerData(stockData[ticker]);
+        setModalOpen(true);
+    };
 
     const renderTickerBox = (ticker) => {
         const data = stockData[ticker];
@@ -81,7 +96,9 @@ const TickerRotator = () => {
                     textAlign: 'center',
                     minWidth: '100px',
                     animation: isFlashing ? 'flash 0.5s ease' : 'none',
+                    cursor: 'pointer',
                 }}
+                onClick={() => handleTickerClick(ticker)}
             >
                 <Typography
                     variant="h6"
@@ -108,6 +125,12 @@ const TickerRotator = () => {
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
                 {rTickers.map(renderTickerBox)}
             </Box>
+
+            <TickerModal
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                tickerData={selectedTickerData}
+            />
         </Box>
     );
 };
