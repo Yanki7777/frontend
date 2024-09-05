@@ -250,7 +250,7 @@ function App() {
       <Container maxWidth="xl" sx={{ marginTop: 3 }}>
 
         <Header getMarketAI={handleMarketAI} loading={loading} selectedUniverse={selectedUniverse} />        
-        <TickerRotator />
+        {/* <TickerRotator /> */}
 
 
         <div className='mainWrapper'>
@@ -270,7 +270,7 @@ function App() {
             </Grid>
             <Grid item lg={4} xs={12} md={1}>
               <Box height="100%">
-                <BuildPortfolio
+                {/* <BuildPortfolio */}
                   portfolio={portfolio}
                   setPortfolio={setPortfolio}
                   loading={portfolioLoading}
