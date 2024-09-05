@@ -55,7 +55,7 @@ function ChatComponent({ yfInfo, portfolio, open, setOpen }) {
                 className="chat-container" 
                 style={{ 
                     width: '100%', 
-                    maxWidth: '600px', 
+                    maxWidth: '1200px', 
                     height: '80%', 
                     display: 'flex', 
                     flexDirection: 'column', 
@@ -73,8 +73,8 @@ function ChatComponent({ yfInfo, portfolio, open, setOpen }) {
                         borderBottom: '1px solid #ddd' 
                     }}
                 >
-                    <Typography variant="h6" component="div">
-                        Chat with Y-Analysis
+                    <Typography variant="h5" component="div">
+                        Ticker Chat with Y-Analysis
                     </Typography>
                     <button 
                         aria-label="close" 
