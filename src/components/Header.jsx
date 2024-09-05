@@ -7,6 +7,7 @@ import {
 import { YAnalisysVersion, baseUrl } from '../utils/config';
 import About from './About';
 import { Snackbar } from '@mui/material';
+import SettingsModal from './Settings';
 const leftPages = []; // Reserved for future use
 const rightPages = ['Markets AI', 'Trade Settings', 'About'];
 const user_settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -171,7 +172,7 @@ const Header = ({ getMarketAI, loading, selectedUniverse }) => {
         />
       </Container>
 
-
+              <SettingsModal open={isTradeSettingsDialogOpen} setOpen={setIsTradeSettingsDialogOpen} />
     </AppBar>
   );
 };

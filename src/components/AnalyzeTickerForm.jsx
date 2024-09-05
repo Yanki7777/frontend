@@ -1,6 +1,7 @@
 import { Box, Button, CircularProgress, Paper, TextField, Typography, Grid } from '@mui/material';
 import React, { useState } from 'react';
 import VolatilityAnalysis from './VolatilityAnalysis';
+import ChatComponent from './ChatComponent';
 const AnalyzeTickerForm = ({
   ticker, setTicker,
   exchange, setExchange,
@@ -8,10 +9,11 @@ const AnalyzeTickerForm = ({
   tickerInterval1, setTickerInterval1,
   tickerInterval2, setTickerInterval2,
   loading, handleAnalyze, error,
-  showTickerMenu
+  showTickerMenu ,yfInfo
 }) => {
   
   const [showVolatilityChart, setShowVolatilityChart] = useState(false); // State to control the rendering of VolatilityChart
+  const [showChat, setShowChat] = useState(false); // State to control the rendering of ChatComponent
   const handleSubmit = (e) => {
     e.preventDefault();
     handleAnalyze();    
@@ -95,8 +97,8 @@ const AnalyzeTickerForm = ({
         </Box>
         {showTickerMenu && (
           <Box display="flex" justifyContent="space-between" sx={{ marginTop: 2 }}>
-            <Button disabled={loading || !ticker.trim()} variant="contained" color="secondary" sx={{ width: '30%' }}>
-              Chat
+            <Button disabled={loading || !ticker.trim()} variant="contained" color="secondary" sx={{ width: '30%' }} onClick={()=>setShowChat(!showChat)}>
+              Ticker Chat
             </Button>
             <Button onClick={() => setShowVolatilityChart(data => !data)} disabled={loading || !ticker.trim()} variant="contained" color="secondary" sx={{ width: '30%' }}>
               Volatitlity analysis
@@ -107,6 +109,7 @@ const AnalyzeTickerForm = ({
           </Box>
         )}
         {showVolatilityChart && <VolatilityAnalysis ticker={ticker} showChart={showVolatilityChart} setShowChart={setShowVolatilityChart} />}
+        <ChatComponent open={showChat} setOpen={setShowChat} yfInfo={yfInfo}/>
       </form>
     </Paper>
   );

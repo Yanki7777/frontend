@@ -1,94 +1,144 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Container, Box, TextField, Button, Typography, Paper } from '@mui/material';
+import { Container, Box, TextField, Button, Typography, Paper, Modal, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import './ChatComponent.css'; // Import the CSS file
 
-function ChatComponent({ yfInfo, portfolio }) {
-  const [messages, setMessages] = useState([]);
-  const [inputMessage, setInputMessage] = useState('');
-  const messagesEndRef = useRef(null);
-  const messagesContainerRef = useRef(null);
+function ChatComponent({ yfInfo, portfolio, open, setOpen }) {
+    const [messages, setMessages] = useState([]);
+    const [inputMessage, setInputMessage] = useState('');
+    const messagesEndRef = useRef(null);
+    const messagesContainerRef = useRef(null);
 
-  const sendMessage = async () => {
-    if (inputMessage.trim() === '') return;
-    console.log(portfolio, 'portfolio');
-    const response = await axios.post('http://localhost:5000/api/chat', { portfolio: portfolio, yfInfo: yfInfo, message: inputMessage });
-    setMessages([...messages, { role: 'user', content: inputMessage }, { role: 'assistant', content: response.data.response }]);
-    setInputMessage('');
-  };
+    const sendMessage = async () => {
+        if (inputMessage.trim() === '') return;
+        console.log(portfolio, 'portfolio');
+        const response = await axios.post('http://localhost:5000/api/chat', { portfolio: portfolio, yfInfo: yfInfo, message: inputMessage });
+        setMessages([...messages, { role: 'user', content: inputMessage }, { role: 'assistant', content: response.data.response }]);
+        setInputMessage('');
+    };
 
-  const resetConversation = async () => {
-    await axios.post('http://localhost:5000/api/reset-chat');
-    setMessages([]);
-  };
+    const resetConversation = async () => {
+        await axios.post('http://localhost:5000/api/reset-chat');
+        setMessages([]);
+    };
 
-  const scrollToBottom = () => {
-    messagesContainerRef.current?.scrollTo({
-      top: messagesContainerRef.current.scrollHeight,
-      behavior: 'smooth',
-    });
-  };
+    const scrollToBottom = () => {
+        messagesContainerRef.current?.scrollTo({
+            top: messagesContainerRef.current.scrollHeight,
+            behavior: 'smooth',
+        });
+    };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
-  const createMarkup = (content) => {
-    const rawMarkup = marked(content);
-    const cleanMarkup = DOMPurify.sanitize(rawMarkup);
-    return { __html: cleanMarkup };
-  };
+    const createMarkup = (content) => {
+        const rawMarkup = marked(content);
+        const cleanMarkup = DOMPurify.sanitize(rawMarkup);
+        return { __html: cleanMarkup };
+    };
 
-  return (
-    <Container 
-      maxWidth="sm" 
-      className="chat-container" 
-      style={{ height: '100%', display: 'flex', flexDirection: 'column', flexGrow: 1 }}
-    >
-      <Paper
-        elevation={3}
-        className="messages-container"
-        style={{
-          flexGrow: 1,
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-        ref={messagesContainerRef}
-      >
-        {messages.map((msg, index) => (
-          <Box key={index} className={`message ${msg.role}`} p={2} mb={1} borderRadius={1}>
-            <Typography variant="body1" component="div">
-              <strong>{msg.role === 'assistant' ? 'Y-Analysis' : msg.role}:</strong>
-              <div dangerouslySetInnerHTML={createMarkup(msg.content)} />
-            </Typography>
-          </Box>
-        ))}
-        <div ref={messagesEndRef} />
-      </Paper>
-      <Box className="input-container" mt={2} display="flex">
-        <TextField
-          variant="outlined"
-          fullWidth
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-          placeholder="Type a message..."
-          className="input-field"
-        />
-        <Box>
-          <Button variant="contained" color="primary" onClick={sendMessage} className="send-button" sx={{ ml: 1 }}>
-            Send
-          </Button>
-          <Button variant="contained" color="secondary" onClick={resetConversation} className="reset-button" sx={{ ml: 1 }}>
-            Reset
-          </Button>
-        </Box>
-      </Box>
-    </Container>
-  );
+    return (
+        <Modal
+            open={open}
+            onClose={() => setOpen(false)}
+            aria-labelledby="chat-modal-title"
+            aria-describedby="chat-modal-description"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+            <Paper 
+                elevation={3} 
+                className="chat-container" 
+                style={{ 
+                    width: '100%', 
+                    maxWidth: '600px', 
+                    height: '80%', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    position: 'relative', 
+                    outline: 'none' 
+                }}
+            >
+                <Box 
+                    className="chat-header" 
+                    style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center', 
+                        padding: '10px 20px', 
+                        borderBottom: '1px solid #ddd' 
+                    }}
+                >
+                    <Typography variant="h6" component="div">
+                        Chat with Y-Analysis
+                    </Typography>
+                    <button 
+                        aria-label="close" 
+                        onClick={() => setOpen(false)} 
+                        style={{ 
+                          background:'red',
+                          color: 'white',
+                          borderRadius:'100%',
+                          border: 'none',
+                          padding: '5px',
+                          cursor: 'pointer',
+                          width: '30px',
+                          height: '30px',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          fontWeight: 'bolder'
+
+                        }}
+                    >
+                      <span>X</span>
+                    </button>
+                </Box>
+                <Box 
+                    className="messages-container" 
+                    style={{ 
+                        flex: 1, 
+                        overflowY: 'auto', 
+                        padding: '10px' 
+                    }} 
+                    ref={messagesContainerRef}
+                >
+                    {messages.map((msg, index) => (
+                        <Box key={index} className={`message ${msg.role}`} p={2} mb={1} borderRadius={1}>
+                            <Typography variant="body1" component="div">
+                                <strong>{msg.role === 'assistant' ? 'Y-Analysis' : msg.role}:</strong>
+                                <div dangerouslySetInnerHTML={createMarkup(msg.content)} />
+                            </Typography>
+                        </Box>
+                    ))}
+                    <div ref={messagesEndRef} />
+                </Box>
+                <Box className="input-container" mt={2} display="flex" p={2}>
+                    <TextField
+                        variant="outlined"
+                        fullWidth
+                        value={inputMessage}
+                        onChange={(e) => setInputMessage(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                        placeholder="Type a message..."
+                        className="input-field"
+                    />
+                    <Box>
+                        <Button variant="contained" color="primary" onClick={sendMessage} className="send-button" sx={{ ml: 1 }}>
+                            Send
+                        </Button>
+                        <Button variant="contained" color="secondary" onClick={resetConversation} className="reset-button" sx={{ ml: 1 }}>
+                            Reset
+                        </Button>
+                    </Box>
+                </Box>
+            </Paper>
+        </Modal>
+    );
 }
 
 export default ChatComponent;

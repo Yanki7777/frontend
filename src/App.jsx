@@ -35,13 +35,14 @@ import AnalyzeTickerForm from './components/AnalyzeTickerForm';
 import HistoricalPricesChart from './components/HistoricalPricesChart';
 import NewsSentiment from './components/NewsSentiment';
 import InsiderTrading from './components/InsiderTrading';
-import TechAnalysisResult from './components/DetailedTechAnalysis';
+import TradingViewAnalysis from './components/TradingViewAnalysis';
 import TickerInfo from './components/TickerInfo';
 import Trade from './components/Trade';
 import TickerRotator from './components/TickerRotator';
 import MarketAI from './components/MarketAI';
 import ChatComponent from './components/ChatComponent';
 import AnalysisSummary from './components/AnalysisSummary';
+import TAAnalyzeDisplay from './components/TAAnalyzeDisplay';
 
 
 
@@ -71,8 +72,10 @@ function App() {
   const [fmpQuote, setFmpQuote] = useState(null);
   const [tickerRTData, setTickerRTData] = useState(null);
   const [insiderTrading, setInsiderTrading] = useState(null);
-  const [techAnalysisResult1, setTechAnalysisResult1] = useState(null);
-  const [techAnalysisResult2, setTechAnalysisResult2] = useState(null);
+  const [tradingViewAnalysis1, setTradingViewAnalysis1] = useState(null);
+  const [tradingViewAnalysis2, setTradingViewAnalysis2] = useState(null);
+  const [taData1, setTAData1] = useState(null);
+  const [taData2, setTAData2] = useState(null);
   const [historicalPrices, setHistoricalPrices] = useState(null);
   const [newsSentiment, setNewsSentiment] = useState(null);
   const [portfolio, setPortfolio] = useState(null);
@@ -147,8 +150,10 @@ function App() {
         fmpQuoteResponse,
         realTimeDataResponse,
         insiderTradingResponse,
-        techAnalysisResponse1,
-        techAnalysisResponse2,
+        tradingViewAnalysisResponse1,
+        tradingViewAnalysisResponse2,
+        taAnalysisResponse1,
+        taAnalysisResponse2,
         historicalResponse,
         newsSentimentResponse,
       ] = await Promise.all([
@@ -156,8 +161,10 @@ function App() {
         axios.post(`${baseUrl}/fmp-quote`, { ticker }),
         axios.post(`${baseUrl}/fmp-real-time-price`, { ticker, exchange }),
         axios.post(`${baseUrl}/ticker-insider-trading`, { ticker, type: 'all' }),
-        axios.post(`${baseUrl}/tech_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval1, AI: false }),
-        axios.post(`${baseUrl}/tech_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval2, AI: false }),
+        axios.post(`${baseUrl}/tradingview_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval1, AI: false }),
+        axios.post(`${baseUrl}/tradingview_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval2, AI: false }),
+        axios.post(`${baseUrl}/ta-analyze-ticker`, { ticker, tickerInterval: tickerInterval1 }),
+        axios.post(`${baseUrl}/ta-analyze-ticker`, { ticker, tickerInterval: tickerInterval2 }),
         axios.post(`${baseUrl}/historical_data`, { ticker, period: "10y" }),
         axios.post(`${baseUrl}/news_sentiment`, { ticker }),
       ]);
@@ -166,8 +173,10 @@ function App() {
       setFmpQuote(fmpQuoteResponse.data);
       setTickerRTData(realTimeDataResponse.data.stock_data);
       setInsiderTrading(insiderTradingResponse.data.insider_trading);
-      setTechAnalysisResult1(techAnalysisResponse1.data);
-      setTechAnalysisResult2(techAnalysisResponse2.data);
+      setTradingViewAnalysis1(tradingViewAnalysisResponse1.data);
+      setTradingViewAnalysis2(tradingViewAnalysisResponse2.data);
+      setTAData1(taAnalysisResponse1.data);
+      setTAData2(taAnalysisResponse2.data);
       setHistoricalPrices({
         data: historicalResponse.data.historical_data, period: "10y"
       });
@@ -180,8 +189,10 @@ function App() {
       setYfInfo(null);
       setFmpQuote(null);
       setTickerRTData(null);
-      setTechAnalysisResult1(null);
-      setTechAnalysisResult2(null);
+      setTradingViewAnalysis1(null);
+      setTradingViewAnalysis2(null);
+      setTAData1(null);
+      setTAData2(null);
       setHistoricalPrices(null);
       setNewsSentiment(null);
     } finally {
@@ -325,6 +336,7 @@ function App() {
                     handleAnalyze={handleAnalyze}
                     showTickerMenu={showTickerMenu}
                     error={error}
+                    yfInfo={yfInfo}
                     sx={{ flex: 1 }}
                   />
                 </Box>
@@ -346,25 +358,32 @@ function App() {
             <Grid lg={1} item xs={12} md={4}>
               <Box display="flex" height="100%">
                 <Paper elevation={3} sx={{ padding: 2, width: '100%', justifyContent: "center", alignItems: "center", display: "flex" }}>
-                  <AnalysisSummary loading={tickerAnalysisLoading} techAnalysisResult={techAnalysisResult1} />
+                  <AnalysisSummary loading={tickerAnalysisLoading} tradingViewAnalysis={tradingViewAnalysis1} />
                 </Paper>
               </Box>
             </Grid>
             <Grid lg={1} item xs={12} md={4}>
               <Box display="flex" height="100%">
                 <Paper elevation={3} sx={{ padding: 2, width: '100%', justifyContent: "center", alignItems: "center", display: "flex" }}>
-                  <AnalysisSummary loading={tickerAnalysisLoading} techAnalysisResult={techAnalysisResult2} />
+                  <AnalysisSummary loading={tickerAnalysisLoading} tradingViewAnalysis={tradingViewAnalysis2} />
                 </Paper>
               </Box>
-            </Grid>
-            <Grid lg={3} item xs={12} md={4}>
+            </Grid>            
+            <Grid lg={1} item xs={12} md={4}>
               <Box display="flex" height="100%">
-                <Paper elevation={3} sx={{ padding: 2, width: '100%' }}>
-                  <ChatComponent yfInfo={yfInfo} portfolio={portfolio}/>
+                <Paper elevation={3} sx={{ padding: 2, width: '100%', justifyContent: "center", alignItems: "center", display: "flex" }}>
+                  <TAAnalyzeDisplay loading={tickerAnalysisLoading} taData={taData1}/>
                 </Paper>
               </Box>
-            </Grid>
-            <Grid item lg={5} xs={12} md={6}>
+            </Grid> 
+            <Grid lg={1} item xs={12} md={4}>
+              <Box display="flex" height="100%">
+                <Paper elevation={3} sx={{ padding: 2, width: '100%', justifyContent: "center", alignItems: "center", display: "flex" }}>
+                  <TAAnalyzeDisplay loading={tickerAnalysisLoading} taData={taData2}/>
+                </Paper>
+              </Box>
+            </Grid> 
+            <Grid item lg={6} xs={12} md={6}>
               <Box display="flex" height="100%">
                 <HistoricalPricesChart
                   // historicalPrices={historicalPrices}                  
@@ -381,16 +400,16 @@ function App() {
         </div>
         <Grid container spacing={2}>
           <Grid item lg={4} xs={12} md={1}>
-            {techAnalysisResult1 && (
+            {tradingViewAnalysis1 && (
               <Box flex={1}>
-                <TechAnalysisResult techAnalysisResult={techAnalysisResult1} loading={tickerAnalysisLoading} />
+                <TradingViewAnalysis tradingViewAnalysis={tradingViewAnalysis1} loading={tickerAnalysisLoading} />
               </Box>
             )}
           </Grid>
           <Grid item lg={4} xs={12} md={1}>
-            {techAnalysisResult2 && (
+            {tradingViewAnalysis2 && (
               <Box flex={1}>
-                <TechAnalysisResult techAnalysisResult={techAnalysisResult2} loading={tickerAnalysisLoading} />
+                <TradingViewAnalysis tradingViewAnalysis={tradingViewAnalysis2} loading={tickerAnalysisLoading} />
               </Box>
             )}
           </Grid>
