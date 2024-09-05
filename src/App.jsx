@@ -1,29 +1,9 @@
-// App component is the main component that renders all the other components
-// It also manages the state of the application
-// It uses the useState and useEffect hooks to manage state and side effects
-// It uses the axios library to make HTTP requests to the backend server
-// It uses the Chart.js library to render the historical prices chart 
-// It uses the Material-UI library to render the user interface
+// App.jsx 
 
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import {
-  Container,
-  Box,
-  Alert,
-  Grid,
-  Paper,
-} from '@mui/material';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { Container, Box, Alert, Grid, Paper, } from '@mui/material';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, } from 'chart.js';
 
 // components
 import Header from './components/Header';
@@ -44,10 +24,22 @@ import ChatComponent from './components/ChatComponent';
 import AnalysisSummary from './components/AnalysisSummary';
 import TAAnalyzeDisplay from './components/TAAnalyzeDisplay';
 
-
-
 //utils
-import { baseUrl } from './utils/config';
+import {
+  baseUrl,
+  HISTORICAL_PERIOD,
+  AI_ENABLED,
+  INTERVALS,
+  DEFAULT_TICKER,
+  DEFAULT_EXCHANGE,
+  DEFAULT_SCREENER,
+  ENABLE_ROTATOR,
+  ENABLE_MARKET_AI,
+}
+  from './utils/config';
+
+  console.log('baseUrl:', baseUrl, 'HISTORICAL_PERIOD:', HISTORICAL_PERIOD, 'AI_ENABLED:', AI_ENABLED, 'INTERVALS:', INTERVALS, 'DEFAULT_TICKER:', DEFAULT_TICKER, 'DEFAULT_EXCHANGE:', DEFAULT_EXCHANGE, 'DEFAULT_SCREENER:', DEFAULT_SCREENER);
+
 import { getChartData } from './utils/ChartData';
 
 ChartJS.register(
@@ -63,11 +55,11 @@ ChartJS.register(
 
 function App() {
 
-  const [ticker, setTicker] = useState('SPY');
-  const [exchange, setExchange] = useState('AMEX');
-  const [screener, setScreener] = useState('America');
-  const [tickerInterval1, setTickerInterval1] = useState('15m');
-  const [tickerInterval2, setTickerInterval2] = useState('1d');
+  const [ticker, setTicker] = useState(DEFAULT_TICKER);
+  const [exchange, setExchange] = useState(DEFAULT_EXCHANGE);
+  const [screener, setScreener] = useState(DEFAULT_SCREENER);
+  const [tickerInterval1, setTickerInterval1] = useState(INTERVALS.SHORT);
+  const [tickerInterval2, setTickerInterval2] = useState(INTERVALS.LONG);
   const [yfInfo, setYfInfo] = useState(null);
   const [fmpQuote, setFmpQuote] = useState(null);
   const [tickerRTData, setTickerRTData] = useState(null);
@@ -79,8 +71,8 @@ function App() {
   const [historicalPrices, setHistoricalPrices] = useState(null);
   const [newsSentiment, setNewsSentiment] = useState(null);
   const [portfolio, setPortfolio] = useState(null);
-  const [portfolioInterval1, setPortfolioInterval1] = useState('15m');
-  const [portfolioInterval2, setPortfolioInterval2] = useState('1d');
+  const [portfolioInterval1, setPortfolioInterval1] = useState(INTERVALS.SHORT);
+  const [portfolioInterval2, setPortfolioInterval2] = useState(INTERVALS.LONG);
   const [selectedUniverse, setSelectedUniverse] = useState(null);
   const [showTickerMenu, setShowTickerMenu] = useState(false);
 
@@ -161,11 +153,11 @@ function App() {
         axios.post(`${baseUrl}/fmp-quote`, { ticker }),
         axios.post(`${baseUrl}/fmp-real-time-price`, { ticker, exchange }),
         axios.post(`${baseUrl}/ticker-insider-trading`, { ticker, type: 'all' }),
-        axios.post(`${baseUrl}/tradingview_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval1, AI: false }),
-        axios.post(`${baseUrl}/tradingview_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval2, AI: false }),
+        axios.post(`${baseUrl}/tradingview_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval1, AI: AI_ENABLED }),
+        axios.post(`${baseUrl}/tradingview_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval2, AI: AI_ENABLED }),
         axios.post(`${baseUrl}/ta-analyze-ticker`, { ticker, tickerInterval: tickerInterval1 }),
         axios.post(`${baseUrl}/ta-analyze-ticker`, { ticker, tickerInterval: tickerInterval2 }),
-        axios.post(`${baseUrl}/historical_data`, { ticker, period: "10y" }),
+        axios.post(`${baseUrl}/historical_data`, { ticker, period: HISTORICAL_PERIOD }),
         axios.post(`${baseUrl}/news_sentiment`, { ticker }),
       ]);
 
@@ -178,7 +170,7 @@ function App() {
       setTAData1(taAnalysisResponse1.data);
       setTAData2(taAnalysisResponse2.data);
       setHistoricalPrices({
-        data: historicalResponse.data.historical_data, period: "10y"
+        data: historicalResponse.data.historical_data, period: HISTORICAL_PERIOD
       });
       setNewsSentiment(newsSentimentResponse.data);
 
@@ -243,14 +235,17 @@ function App() {
   };
 
 
-  
+
 
   return (
     <>
       <Container maxWidth="xl" sx={{ marginTop: 3 }}>
 
-        <Header getMarketAI={handleMarketAI} loading={loading} selectedUniverse={selectedUniverse} />        
-        {/* <TickerRotator /> */}
+        <Header getMarketAI={handleMarketAI} loading={loading} selectedUniverse={selectedUniverse} />
+        {ENABLE_ROTATOR &&
+         <TickerRotator 
+        />}
+        
 
 
         <div className='mainWrapper'>
@@ -263,14 +258,12 @@ function App() {
                   setExchange={setExchange}
                   setSelectedUniverse={setSelectedUniverse}
                   handleAnalyze={handleAnalyze}
-                // ticker={ticker}
-                // exchange={exchange}
                 />
               </Box>
             </Grid>
             <Grid item lg={4} xs={12} md={1}>
               <Box height="100%">
-                {/* <BuildPortfolio */}
+                <BuildPortfolio
                   portfolio={portfolio}
                   setPortfolio={setPortfolio}
                   loading={portfolioLoading}
@@ -368,28 +361,26 @@ function App() {
                   <AnalysisSummary loading={tickerAnalysisLoading} tradingViewAnalysis={tradingViewAnalysis2} />
                 </Paper>
               </Box>
-            </Grid>            
+            </Grid>
             <Grid lg={1} item xs={12} md={4}>
               <Box display="flex" height="100%">
                 <Paper elevation={3} sx={{ padding: 2, width: '100%', justifyContent: "center", alignItems: "center", display: "flex" }}>
-                  <TAAnalyzeDisplay loading={tickerAnalysisLoading} taData={taData1}/>
+                  <TAAnalyzeDisplay loading={tickerAnalysisLoading} taData={taData1} />
                 </Paper>
               </Box>
-            </Grid> 
+            </Grid>
             <Grid lg={1} item xs={12} md={4}>
               <Box display="flex" height="100%">
                 <Paper elevation={3} sx={{ padding: 2, width: '100%', justifyContent: "center", alignItems: "center", display: "flex" }}>
-                  <TAAnalyzeDisplay loading={tickerAnalysisLoading} taData={taData2}/>
+                  <TAAnalyzeDisplay loading={tickerAnalysisLoading} taData={taData2} />
                 </Paper>
               </Box>
-            </Grid> 
+            </Grid>
             <Grid item lg={6} xs={12} md={6}>
               <Box display="flex" height="100%">
                 <HistoricalPricesChart
-                  // historicalPrices={historicalPrices}                  
                   setHistoricalPrices={setHistoricalPrices}
                   chartData={chartData}
-                  //getChartData={getChartData}                  
                   loading={tickerAnalysisLoading}
                   ticker={ticker}
                   sx={{ flex: 1 }}
