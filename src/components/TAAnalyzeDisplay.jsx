@@ -28,8 +28,10 @@ const TAAnalyzeDisplay = ({ taData, loading }) => {
       // Create a Blob from the CSV
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       
-      // Trigger the download using file-saver
-      saveAs(blob, 'indicators_data.csv');
+      const timestamp = taData.timestamp.replace(/[:\s]/g, '-');
+      const fileName = `${taData.ticker}_${timestamp}_indicators_data.csv`;
+
+      saveAs(blob, fileName);
     } else {
       console.error("No data found or empty data in full_indicators_list");
     }
@@ -56,6 +58,15 @@ const TAAnalyzeDisplay = ({ taData, loading }) => {
       </Typography>
     );
   }
+
+  // Get the last two most recent rows from full_indicators_list
+  const recentData = Object.entries(taData.full_indicators_list).map(([key, value]) => {
+    if (Array.isArray(value)) {
+      return { indicator: key, values: value.slice(-2) }; // Get the last 2 values
+    } else {
+      return { indicator: key, values: [value] }; // If not an array, just return the single value
+    }
+  });
 
   return (
     <Paper
