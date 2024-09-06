@@ -362,21 +362,21 @@ function App() {
                 </Paper>
               </Box>
             </Grid>
-            <Grid lg={1} item xs={12} md={4}>
+            <Grid lg={2} item xs={12} md={4}>
               <Box display="flex" height="100%">
                 <Paper elevation={3} sx={{ padding: 2, width: '100%', justifyContent: "center", alignItems: "center", display: "flex" }}>
                   <TAAnalyzeDisplay loading={tickerAnalysisLoading} taData={taData1} />
                 </Paper>
               </Box>
             </Grid>
-            <Grid lg={1} item xs={12} md={4}>
+            <Grid lg={2} item xs={12} md={4}>
               <Box display="flex" height="100%">
                 <Paper elevation={3} sx={{ padding: 2, width: '100%', justifyContent: "center", alignItems: "center", display: "flex" }}>
                   <TAAnalyzeDisplay loading={tickerAnalysisLoading} taData={taData2} />
                 </Paper>
               </Box>
             </Grid>
-            <Grid item lg={6} xs={12} md={6}>
+            <Grid item lg={4} xs={12} md={6}>
               <Box display="flex" height="100%">
                 <HistoricalPricesChart
                   setHistoricalPrices={setHistoricalPrices}

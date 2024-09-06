@@ -8,5 +8,5 @@ export const DEFAULT_EXCHANGE = "NASDAQ";                 // Default exchange
 export const DEFAULT_SCREENER = "America";        // Default screener
 export const ENABLE_ROTATOR = true;               // Default screener
 export const ENABLE_MARKET_AI = false;             // Default screener
-export const AI_ENABLED = true;                   // AI flag for TradingView analysis
+export const AI_ENABLED = false;                   // AI flag for TradingView analysis
 
