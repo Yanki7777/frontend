@@ -3,39 +3,40 @@ import {Box, Button, CircularProgress, Paper, Typography, Table, TableBody, Tabl
 import { memo } from 'react';
 import { saveAs } from 'file-saver';
 
-const TickerRow = memo(({ ticker_item, activeTicker, onClickTicker }) => (
+const TickerRow = memo(({ trade_item, activeTicker, onClickTicker }) => (
   <TableRow
-    onClick={() => onClickTicker(ticker_item)}
+    onClick={() => onClickTicker(trade_item)}
     sx={{
       cursor: 'pointer',
       transition: 'background-color 0.3s ease',
-      backgroundColor: activeTicker === ticker_item.ticker ? '#e0e0e0' : '#ffffff',
+      backgroundColor: activeTicker === trade_item.ticker ? '#e0e0e0' : '#ffffff',
       '&:hover': {
-        backgroundColor: activeTicker === ticker_item.ticker ? '#d0d0d0' : '#43d397',
+        backgroundColor: activeTicker === trade_item.ticker ? '#d0d0d0' : '#43d397',
       },
     }}
   >
-    <TableCell>{ticker_item.exchange}:<strong>{ticker_item.ticker}</strong></TableCell>
-    <TableCell>{ticker_item.ta_ind1_recommendation}</TableCell>
-    <TableCell>{ticker_item.ta_ma1_recommendation}</TableCell>
-    <TableCell>{ticker_item.ta_osc1_recommendation}</TableCell>
-    <TableCell>{ticker_item.ta_rsi1}</TableCell>
-    <TableCell>{ticker_item.ta_ind2_recommendation}</TableCell>
-    <TableCell>{ticker_item.ta_ma2_recommendation}</TableCell>
-    <TableCell>{ticker_item.ta_osc2_recommendation}</TableCell>
-    <TableCell>{ticker_item.ta_rsi2}</TableCell>
-    <TableCell>{ticker_item.analyst_recommendation}</TableCell>
+    <TableCell>{trade_item.exchange}:<strong>{trade_item.ticker}</strong></TableCell>
+    <TableCell>{trade_item.tv_ind1_recommendation}</TableCell>
+    <TableCell>{trade_item.tv_ma1_recommendation}</TableCell>
+    <TableCell>{trade_item.tv_osc1_recommendation}</TableCell>
+    <TableCell>{trade_item.tv_rsi1}</TableCell>
+    <TableCell>{trade_item.tv_ind2_recommendation}</TableCell>
+    <TableCell>{trade_item.tv_ma2_recommendation}</TableCell>
+    <TableCell>{trade_item.tv_osc2_recommendation}</TableCell>
+    <TableCell>{trade_item.tv_rsi2}</TableCell>
+    <TableCell>{trade_item.analyst_recommendation}</TableCell>
   </TableRow>
 ));
 
 const Trade = ({ handleTrade, loading, portfolio, setTicker, setExchange, handleAnalyze }) => {
+  console.log(portfolio);
   const [activeTicker, setActiveTicker] = useState(null);
 
   const onClickTicker = useCallback(
-    (ticker_item) => {
-      setTicker(ticker_item.ticker);
-      setExchange(ticker_item.exchange);
-      setActiveTicker(ticker_item.ticker);
+    (trade_item) => {
+      setTicker(trade_item.ticker);
+      setExchange(trade_item.exchange);
+      setActiveTicker(trade_item.ticker);
     },
     [setTicker, setExchange]
   );
@@ -47,10 +48,10 @@ const Trade = ({ handleTrade, loading, portfolio, setTicker, setExchange, handle
     }
   }, [activeTicker, handleAnalyze]);
 
-  const hasTickers = portfolio?.tickers?.length > 0;
+  const hasTrades = portfolio?.trades?.length > 0;
 
       const downloadCSV = () => {
-      if (!hasTickers) return;
+      if (!hasTrades) return;
     
       // Extract portfolio fields
       const portfolioFields = [
@@ -58,7 +59,7 @@ const Trade = ({ handleTrade, loading, portfolio, setTicker, setExchange, handle
         ['Timestamp', portfolio.creation_date || 'unknown'], // Use creation_date from portfolio
         ['Interval1', portfolio.interval1],
         ['Interval2', portfolio.interval2],
-        ['Stocks', portfolio.tickers.length],
+        ['Stocks', portfolio.trades.length],
       ];
     
       const csvHeaders = [
@@ -75,18 +76,18 @@ const Trade = ({ handleTrade, loading, portfolio, setTicker, setExchange, handle
         'Analyst',
       ];
     
-      const rows = portfolio.tickers.map(ticker_item => [
-        ticker_item.exchange,
-        ticker_item.ticker,
-        ticker_item.ta_ind1_recommendation,
-        ticker_item.ta_ma1_recommendation,
-        ticker_item.ta_osc1_recommendation,
-        ticker_item.ta_rsi1,
-        ticker_item.ta_ind2_recommendation,
-        ticker_item.ta_ma2_recommendation,
-        ticker_item.ta_osc2_recommendation,
-        ticker_item.ta_rsi2,
-        ticker_item.analyst_recommendation,
+      const rows = portfolio.trades.map(trade_item => [
+        trade_item.exchange,
+        trade_item.ticker,
+        trade_item.tv_ind1_recommendation,
+        trade_item.tv_ma1_recommendation,
+        trade_item.tv_osc1_recommendation,
+        trade_item.tv_rsi1,
+        trade_item.tv_ind2_recommendation,
+        trade_item.tv_ma2_recommendation,
+        trade_item.tv_osc2_recommendation,
+        trade_item.tv_rsi2,
+        trade_item.analyst_recommendation,
       ]);
     
       const csvContent = [
@@ -132,12 +133,12 @@ const Trade = ({ handleTrade, loading, portfolio, setTicker, setExchange, handle
           }}
         >
           <Typography variant="body1">
-            Interval1: {portfolio.interval1} Interval2: {portfolio.interval2} Stocks: {portfolio?.tickers.length}
+            Interval1: {portfolio.interval1} Interval2: {portfolio.interval2} Stocks: {portfolio?.trades.length}
           </Typography>
         </Box>
       )}
 
-      {hasTickers && (
+      {hasTrades && (
         <Box
           sx={{
             padding: 2,
@@ -168,10 +169,10 @@ const Trade = ({ handleTrade, loading, portfolio, setTicker, setExchange, handle
               </TableRow>
             </TableHead>
             <TableBody>
-              {portfolio.tickers.map((ticker_item, index) => (
+              {portfolio.trades.map((trade_item, index) => (
                 <TickerRow
                   key={index}
-                  ticker_item={ticker_item}
+                  trade_item={trade_item}
                   activeTicker={activeTicker}
                   onClickTicker={onClickTicker}
                 />
@@ -189,7 +190,7 @@ const Trade = ({ handleTrade, loading, portfolio, setTicker, setExchange, handle
         </Box>
       )}
 
-{hasTickers && (
+{hasTrades && (
   <Box display="flex" justifyContent="center" sx={{ marginTop: 2 }}>
     <Button
       variant="contained"

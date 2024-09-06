@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Box, Paper, Button, Typography, FormControl, FormLabel, Select, MenuItem, Checkbox, ListItemText, OutlinedInput, Radio, RadioGroup, FormControlLabel, TextField } from '@mui/material';
+import { Box, Paper, Button, Typography, FormControl, FormLabel, Select, MenuItem, Checkbox, ListItemText, OutlinedInput, Radio, RadioGroup, FormControlLabel, TextField, Alert } from '@mui/material';
 import axios from 'axios';
 import { baseUrl } from '../utils/config';
 import RecommendationCounts from './RecommendationCounts';
@@ -8,7 +8,75 @@ const intervals = ["1m", "5m", "15m", "30m", "1h", "2h", "4h", "1d", "1W", "1M"]
 const sectorOptions = ['Technology', 'Healthcare', 'Financial Services', 'Consumer Cyclical', 'Consumer Defensive', 'Industrials', 'Utilities', 'Basic Materials', 'Real Estate', 'Communication Services', 'Energy'];
 const marketCapOptions = ['Micro', 'Small', 'Mid', 'Big', 'Mega'];
 
-const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioInterval1, setPortfolioInterval2, setPortfolio, portfolio, setPortfolioLoading, selectedUniverse }) => {
+// Reusable Checkbox Group Component
+const CheckboxGroup = ({
+  renderList, title, prefix, requiredRecommendations, onChangeHandler,
+  rsiValue, onRsiChange, rsiLabel, macdGap, onMacdGapChange, macdHist, onMacdHistChange
+}) => (
+  <Box sx={{ marginBottom: 0, display: 'flex', alignItems: 'center', gap: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1, maxWidth: '100%' }}>
+      <strong>{title}: </strong>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0 }}>
+        {renderList.map((item) => (
+          <FormControlLabel
+            key={item}
+            control={
+              <Checkbox
+                size="small"
+                name={`${prefix}${item}`}
+                checked={requiredRecommendations[`${prefix}${item}`]}
+                onChange={onChangeHandler}
+              />
+            }
+            label={item.charAt(0).toUpperCase() + item.slice(1)}
+            sx={{ marginRight: 0, marginLeft: 0, gap: '0px' }}
+          />
+        ))}
+      </Box>
+    </Box>
+    {/* MACD Gap field */}
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <FormLabel component="legend" sx={{ marginRight: 2 }}><strong>MACD Gap</strong></FormLabel>
+      <TextField
+        type="number"
+        value={macdGap}
+        onChange={onMacdGapChange}
+        variant="outlined"
+        size="small"
+        inputProps={{ step: 0.01 }}
+        sx={{ width: '90px' }}
+      />
+    </Box>
+    {/* MACD Hist field */}
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <FormLabel component="legend" sx={{ marginRight: 2 }}><strong>MACD Hist</strong></FormLabel>
+      <TextField
+        type="number"
+        value={macdHist}
+        onChange={onMacdHistChange}
+        variant="outlined"
+        size="small"
+        inputProps={{ step: 0.01 }}
+        sx={{ width: '90px' }}
+      />
+    </Box>
+    {/* RSI field */}
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <FormLabel component="legend" sx={{ marginRight: 2 }}><strong>{rsiLabel}</strong></FormLabel>
+      <TextField
+        type="number"
+        value={rsiValue}
+        onChange={onRsiChange}
+        variant="outlined"
+        size="small"
+        inputProps={{ min: 0, max: 100 }}    
+        sx={{ width: '90px' }} 
+      />
+    </Box>
+  </Box>
+);
+
+const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioInterval1, setPortfolioInterval2, setPortfolio, portfolio, portfolioLoading, setPortfolioLoading, selectedUniverse }) => {
 
   const [requiredRecommendations, setRequiredRecommendations] = useState({
     ind1: true,
@@ -24,16 +92,38 @@ const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioIn
   const [selectedMarketCaps, setSelectedMarketCaps] = useState(marketCapOptions);
   const [rsi1Below, setRsi1Below] = useState(100);
   const [rsi2Below, setRsi2Below] = useState(100);
-  const [error, setError] = useState(null); // Define the error state
+  const [macdGap1, setMacdGap1] = useState(3.0);
+  const [macdGap2, setMacdGap2] = useState(3.0);
+  const [macdHist1, setMacdHist1] = useState(1.0);
+  const [macdHist2, setMacdHist2] = useState(1.0);
+
+  const [error, setError] = useState(null); // Error state
+
+  const handleInputChange = useCallback((setter) => (event) => {
+    setter(event.target.value);
+  }, []);
 
   const handleBuildPortfolio = async () => {
     setPortfolioLoading(true);
     setError(null);
     try {
-      const response = await axios.post(`${baseUrl}/build_portfolio`,
-        { selectedUniverse, portfolioInterval1, portfolioInterval2, requiredRecommendations, selectedSectors, selectedMarketCaps, rsi1Below , rsi2Below });
+      const response = await axios.post(`${baseUrl}/build_portfolio`, {
+        selectedUniverse,
+        portfolioInterval1,
+        portfolioInterval2,
+        requiredRecommendations,
+        selectedSectors,
+        selectedMarketCaps,
+        rsi1Below,
+        rsi2Below,
+        macdGap1,
+        macdGap2,
+        macdHist1,
+        macdHist2
+      });
       if (response.status === 200) {
         const portfolio = response.data;
+        console.log('built', portfolio);
         setPortfolio(portfolio);
         if (portfolio.length === 0) {
           setError('No Portfolio at this time.');
@@ -67,62 +157,14 @@ const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioIn
   }, []);
 
   const handleSectorChange = (event) => {
-    const {
-      target: { value },
-    } = event;
+    const { target: { value } } = event;
     setSelectedSectors(typeof value === 'string' ? value.split(',') : value);
   };
 
   const handleMarketCapChange = (event) => {
-    const {
-      target: { value },
-    } = event;
+    const { target: { value } } = event;
     setSelectedMarketCaps(typeof value === 'string' ? value.split(',') : value);
   };
-
-  const handleRsi1Change = (event) => {
-    setRsi1Below(event.target.value);
-  };
-
-  const handleRsi2Change = (event) => {
-    setRsi2Below(event.target.value);
-  };
-
-  const renderCheckboxGroup = (renderList, title, prefix = '', layoutProps = {}, rsiValue, handleRsiChange, rsiLabel) => (
-    <Box sx={{ marginBottom: 0, display: 'flex', alignItems: 'center', gap: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1, ...layoutProps, maxWidth: '100%' }}>
-        <strong>{title}: </strong>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-          {renderList.map((item) => (
-            <FormControlLabel
-              key={item}
-              control={
-                <Checkbox
-                  size="small"
-                  name={`${prefix}${item}`}
-                  checked={requiredRecommendations[`${prefix}${item}`]}
-                  onChange={handleRequirementsChange}
-                />
-              }
-              label={item.charAt(0).toUpperCase() + item.slice(1)}
-              sx={{ marginRight: 0, marginLeft: 0, gap: '0px' }}
-            />
-          ))}
-        </Box>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <FormLabel component="legend" sx={{ marginRight: 2 }}><strong>{rsiLabel}</strong></FormLabel>
-        <TextField
-          type="number"
-          value={rsiValue}
-          onChange={handleRsiChange}
-          variant="outlined"
-          size="small"
-          inputProps={{ min: 0, max: 100 }}
-        />
-      </Box>
-    </Box>
-  );
 
   return (
     <Paper elevation={3} sx={{ padding: 1, height: 'auto', minHeight: '650px' }}>
@@ -132,21 +174,22 @@ const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioIn
             variant="contained"
             color="secondary"
             onClick={handleBuildPortfolio}
-            disabled={!selectedUniverse}
+            disabled={!selectedUniverse || portfolioLoading}
             sx={{ flex: 1, height: 30 }}
           >
-            Build Portfolio
+            {portfolioLoading ? "Building..." : "Build Portfolio"}
           </Button>
-          {error && (
-            <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
-              {error}
-            </Typography>
-          )}
         </Box>
+        {error && (
+          <Alert severity="error" sx={{ marginTop: 1 }}>
+            {error}
+          </Alert>
+        )}
 
+        {/* TA Interval 1 Section */}
         <Box sx={{ marginBottom: 0 }}>
           <FormControl component="fieldset">
-            <FormLabel component="legend">TA Interval 1</FormLabel>
+            <FormLabel component="legend">Interval 1</FormLabel>
             <RadioGroup
               aria-label="portfolio-interval"
               name="portfolioInterval1"
@@ -166,19 +209,26 @@ const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioIn
           </FormControl>
         </Box>
 
-        {renderCheckboxGroup(
-          ['ind1', 'ma1', 'osc1'],
-          'TA Interval 1 Recommendations',
-          '',
-          {},
-          rsi1Below,
-          handleRsi1Change,
-          'RSI 1 below'
-        )}
+        {/* TA Interval 1 Recommendations */}
+        <CheckboxGroup
+          renderList={['ind1', 'ma1', 'osc1']}
+          title="TV Recommendations"
+          prefix=""
+          requiredRecommendations={requiredRecommendations}
+          onChangeHandler={handleRequirementsChange}
+          rsiValue={rsi1Below}
+          onRsiChange={handleInputChange(setRsi1Below)}
+          rsiLabel="RSI 1 below"
+          macdGap={macdGap1}
+          onMacdGapChange={handleInputChange(setMacdGap1)}
+          macdHist={macdHist1}
+          onMacdHistChange={handleInputChange(setMacdHist1)}
+        />
 
+        {/* TA Interval 2 Section */}
         <Box sx={{ marginBottom: 0 }}>
           <FormControl component="fieldset">
-            <FormLabel component="legend">TA Interval 2</FormLabel>
+            <FormLabel component="legend">Interval 2</FormLabel>
             <RadioGroup
               aria-label="portfolio-interval"
               name="portfolioInterval2"
@@ -198,16 +248,23 @@ const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioIn
           </FormControl>
         </Box>
 
-        {renderCheckboxGroup(
-          ['ind2', 'ma2', 'osc2'],
-          'TA Interval 2 Recommendations',
-          '',
-          {},
-          rsi2Below,
-          handleRsi2Change,
-          'RSI 2 below'
-        )}
+        {/* TA Interval 2 Recommendations */}
+        <CheckboxGroup
+          renderList={['ind2', 'ma2', 'osc2']}
+          title="TV Recommendations"
+          prefix=""
+          requiredRecommendations={requiredRecommendations}
+          onChangeHandler={handleRequirementsChange}
+          rsiValue={rsi2Below}
+          onRsiChange={handleInputChange(setRsi2Below)}
+          rsiLabel="RSI 2 below"
+          macdGap={macdGap2}
+          onMacdGapChange={handleInputChange(setMacdGap2)}
+          macdHist={macdHist2}
+          onMacdHistChange={handleInputChange(setMacdHist2)}
+        />
 
+        {/* Analyst and Other Inputs */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, marginBottom: 2 }}>
           <FormControlLabel
             control={
