@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, Box, CircularProgress, Paper, Select, MenuItem, FormControl, InputLabel, Button, TextField } from '@mui/material';
 import axios from 'axios';
 import { baseUrl } from '../utils/config';
@@ -24,6 +24,10 @@ function VolatilityBox() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    updateVolatilityData();
+  }, []);
 
   const handleTickerChange = (e) => {
     setTicker(e.target.value);
@@ -101,12 +105,12 @@ function VolatilityBox() {
         <Box mt={1}>
           {data.change_summary.num_positive_changes !== undefined && (
             <Typography variant="body2" sx={{ color: 'green', textAlign:'center' }}>
-              {`Num:${data.change_summary.num_positive_changes}  Avg:${data.change_summary.avg_positive_change}%  Max:${data.change_summary.max_positive_change}%`}
+              {`Num: ${data.change_summary.num_positive_changes}  Avg: ${data.change_summary.avg_positive_change}%  Max: ${data.change_summary.max_positive_change}%`}
             </Typography>
           )}
           {data.change_summary.num_negative_changes !== undefined && (
             <Typography variant="body2" sx={{ color: 'red', textAlign:'center' }}>
-              {`Num:${data.change_summary.num_negative_changes}  Avg:${data.change_summary.avg_negative_change}%  Max:${data.change_summary.max_negative_change}%`}
+              {`Num: ${data.change_summary.num_negative_changes}  Avg: ${data.change_summary.avg_negative_change}%  Max: ${data.change_summary.max_negative_change}%`}
             </Typography>
           )}
         </Box>
