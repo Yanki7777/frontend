@@ -9,10 +9,9 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
 
   const updateHistoricalPrices = React.useCallback(async () => {
     try {
-      // console.time('historical_data');
-      console.log('Fetching historical data for', ticker, 'with period', period);
-      const res = await axios.post(`${baseUrl}/historical_data`, { ticker, period: period });
-      setHistoricalPrices({data:res.data.historical_data,period:period});
+      // console.time('historical_data'); 
+      const res = await axios.post(`${baseUrl}/historical-data`, { ticker, period: period });
+      setHistoricalPrices({data:res.data.historical_data,period:period});      
       // console.timeEnd('historical_data');
     } catch (e) {
       console.error('Failed to fetch historical data:', e);

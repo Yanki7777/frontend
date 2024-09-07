@@ -33,8 +33,8 @@ const TradingViewAnalysis = ({ tradingViewAnalysis, loading }) => {
                 price: {tradingViewAnalysis?.indicators?.close.toFixed(2)} change: {tradingViewAnalysis?.indicators?.change.toFixed(2)} vol: {tradingViewAnalysis.indicators.volume}
               </Typography>
               
-              <Typography variant="body2" gutterBottom>
-                <pre>
+              <Typography component="pre" variant="body2" gutterBottom>
+         
                   Buy: {JSON.stringify(tradingViewAnalysis.summary.BUY, null, 2)}
                   <br />
                   Neutral: {JSON.stringify(tradingViewAnalysis.summary.NEUTRAL, null, 2)}
@@ -43,19 +43,19 @@ const TradingViewAnalysis = ({ tradingViewAnalysis, loading }) => {
                   <br />
                   Recommendation: {JSON.stringify(tradingViewAnalysis.summary.RECOMMENDATION, null, 2)}
                   <br />
-                </pre>
-              </Typography>              
+                
+              </Typography >              
               <Box sx={{ marginTop: 2 }}>
-                <Typography variant="subtitle1">Indicators:</Typography>
-                <pre>{JSON.stringify(tradingViewAnalysis.indicators, null, 2)}</pre>
+                <Typography component="pre" variant="subtitle1">Indicators:</Typography>
+                {JSON.stringify(tradingViewAnalysis.indicators, null, 2)}
               </Box>
               <Box sx={{ marginTop: 2 }}>
-                <Typography variant="subtitle1">Moving Averages:</Typography>
-                <pre>{JSON.stringify(tradingViewAnalysis.moving_averages, null, 2)}</pre>
+                <Typography component="pre" variant="subtitle1">Moving Averages:</Typography>
+                {JSON.stringify(tradingViewAnalysis.moving_averages, null, 2)}
               </Box>
               <Box sx={{ marginTop: 2 }}>
-                <Typography variant="subtitle1">Oscillators:</Typography>
-                <pre>{JSON.stringify(tradingViewAnalysis.oscillators, null, 2)}</pre>
+                <Typography component="pre" variant="subtitle1">Oscillators:</Typography>
+                {JSON.stringify(tradingViewAnalysis.oscillators, null, 2)}
               </Box>
             </Paper>
           </Box>

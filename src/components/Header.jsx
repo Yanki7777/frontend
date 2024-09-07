@@ -168,7 +168,7 @@ const Header = ({ getMarketAI, loading, selectedUniverse }) => {
           open={isSnackbarOpen}
           autoHideDuration={3000} // Snackbar will auto-hide after 3 seconds
           onClose={() => setIsSnackbarOpen(false)}
-          message="Trade settings will be here soon"
+          message=""
         />
       </Container>
 

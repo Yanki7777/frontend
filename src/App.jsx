@@ -38,7 +38,7 @@ import {
 }
   from './utils/config';
 
-  console.log('baseUrl:', baseUrl, 'HISTORICAL_PERIOD:', HISTORICAL_PERIOD, 'AI_ENABLED:', AI_ENABLED, 'INTERVALS:', INTERVALS, 'DEFAULT_TICKER:', DEFAULT_TICKER, 'DEFAULT_EXCHANGE:', DEFAULT_EXCHANGE, 'DEFAULT_SCREENER:', DEFAULT_SCREENER);
+// console.log('baseUrl:', baseUrl, 'HISTORICAL_PERIOD:', HISTORICAL_PERIOD, 'AI_ENABLED:', AI_ENABLED, 'INTERVALS:', INTERVALS, 'DEFAULT_TICKER:', DEFAULT_TICKER, 'DEFAULT_EXCHANGE:', DEFAULT_EXCHANGE, 'DEFAULT_SCREENER:', DEFAULT_SCREENER);
 
 import { getChartData } from './utils/ChartData';
 
@@ -157,7 +157,7 @@ function App() {
         axios.post(`${baseUrl}/tradingview_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval2, AI: AI_ENABLED }),
         axios.post(`${baseUrl}/ta-analyze-ticker`, { ticker, tickerInterval: tickerInterval1 }),
         axios.post(`${baseUrl}/ta-analyze-ticker`, { ticker, tickerInterval: tickerInterval2 }),
-        axios.post(`${baseUrl}/historical_data`, { ticker, period: HISTORICAL_PERIOD }),
+        axios.post(`${baseUrl}/historical-data`, { ticker, period: HISTORICAL_PERIOD }),
         axios.post(`${baseUrl}/news_sentiment`, { ticker }),
       ]);
 
@@ -193,19 +193,6 @@ function App() {
   };
 
 
-  // To be developed
-  const handleTrade = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-
-    } catch (err) {
-      console.error('Error Trading:', err);
-      setError('Failed to retrieve trade. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleMarketAI = async () => {
     setMarketAiLoading(true);
@@ -242,10 +229,17 @@ function App() {
       <Container maxWidth="xl" sx={{ marginTop: 3 }}>
 
         <Header getMarketAI={handleMarketAI} loading={loading} selectedUniverse={selectedUniverse} />
-        {ENABLE_ROTATOR &&
-         <TickerRotator 
-        />}
-        
+        <Grid container spacing={2}>
+          {ENABLE_ROTATOR && (
+            <Grid item xs={10}>
+              <TickerRotator />
+            </Grid>
+          )}
+          <Grid item xs={2}>
+            <FearAndGreed />
+          </Grid>
+        </Grid>
+
 
 
         <div className='mainWrapper'>
@@ -281,7 +275,6 @@ function App() {
                 <Trade
                   portfolio={portfolio}
                   loading={portfolioLoading}
-                  handleTrade={handleTrade}
                   setTicker={setTicker}
                   setExchange={setExchange}
                   handleAnalyze={handleAnalyze}
@@ -292,10 +285,8 @@ function App() {
               <Box height="100%">
                 <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
                   <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <FearAndGreed />
-                    </Grid>
-                    <Grid item xs={6}>
+
+                    <Grid item xs={12}>
                       <SpyVolatility />
                     </Grid>
                   </Grid>

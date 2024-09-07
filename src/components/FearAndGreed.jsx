@@ -47,7 +47,7 @@ const Gauge = ({ value }) => {
           position: 'absolute',
           width: '2px',
           height: '40px',
-          backgroundColor: '#333',
+          backgroundColor: '#fff',
           left: '50%',
           bottom: '0',
           ...needleStyle,
@@ -71,8 +71,7 @@ const FearAndGreed = () => {
         if (response.status === 200) {
           const data = response.data;
           setGafIndex(data.gafIndex);
-          setLastUpdate(data.lastUpdate);
-          console.log('FearAndGreed:', data.gafIndex);
+          setLastUpdate(data.lastUpdate);  
         } else {
           setError('Unexpected response status: ' + response.status);
         }
@@ -91,13 +90,14 @@ const FearAndGreed = () => {
     <Paper
       elevation={2}
       sx={{
+        backgroundColor: '#1c2833',
         padding: 1,
         textAlign: 'center',
         margin: '0 auto',
-        //maxWidth: '250px',
-        maxHeight: '80px',
-        mb: 2,  // Add bottom margin here
+        color: '#fff',        
+        mb: 2, 
       }}
+      
     >
       {loading ? (
         <Typography variant="body2">Loading...</Typography>

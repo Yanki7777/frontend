@@ -3,7 +3,7 @@ import {Box, Button, CircularProgress, Paper, Typography, Table, TableBody, Tabl
 import { memo } from 'react';
 import { saveAs } from 'file-saver';
 
-const TickerRow = memo(({ trade_item, activeTicker, onClickTicker }) => (
+const TradeRow = memo(({ trade_item, activeTicker, onClickTicker }) => (
   <TableRow
     onClick={() => onClickTicker(trade_item)}
     sx={{
@@ -28,8 +28,7 @@ const TickerRow = memo(({ trade_item, activeTicker, onClickTicker }) => (
   </TableRow>
 ));
 
-const Trade = ({ handleTrade, loading, portfolio, setTicker, setExchange, handleAnalyze }) => {
-  console.log(portfolio);
+const Trade = ({ loading, portfolio, setTicker, setExchange, handleAnalyze }) => {
   const [activeTicker, setActiveTicker] = useState(null);
 
   const onClickTicker = useCallback(
@@ -106,6 +105,10 @@ const Trade = ({ handleTrade, loading, portfolio, setTicker, setExchange, handle
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       saveAs(blob, fileName);
     };
+
+    const handleTrade = () => {
+      
+    }
   
   return (
     <Paper elevation={3} sx={{ padding: 1, minHeight: '650px' , display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -170,7 +173,7 @@ const Trade = ({ handleTrade, loading, portfolio, setTicker, setExchange, handle
             </TableHead>
             <TableBody>
               {portfolio.trades.map((trade_item, index) => (
-                <TickerRow
+                <TradeRow
                   key={index}
                   trade_item={trade_item}
                   activeTicker={activeTicker}

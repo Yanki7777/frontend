@@ -80,11 +80,11 @@ const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioIn
 
   const [requiredRecommendations, setRequiredRecommendations] = useState({
     ind1: true,
-    ma1: true,
-    osc1: true,
+    ma1: false,
+    osc1: false,
     ind2: true,
-    ma2: true,
-    osc2: true,
+    ma2: false,
+    osc2: false,
     analyst: false,
   });
 

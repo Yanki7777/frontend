@@ -15,7 +15,7 @@ const MarketAI = ({ handleMarketTrend, loading, marketAI }) => {
   }, [marketAI]);
 
   return (
-    <Paper elevation={3} sx={{ padding: 2, height: '65%',  minHeight: '650' }}>
+    <Paper elevation={3} sx={{ padding: 2, height: '55%',  minHeight: '150' }}>
       <Typography variant="h5" gutterBottom>
         Market AI
       </Typography>
