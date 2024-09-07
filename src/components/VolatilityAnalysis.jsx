@@ -22,9 +22,6 @@ const VolatilityAnalysis = ({ ticker, loading, showChart, setShowChart }) => {
       setChangeSummary(res.data.change_summary);
       console.log('VOLATILITY:', res.data,
          'change_summery', res.data.change_summary,
-        //  'avg_positive_change:', res.data.avg_positive_change,
-        //  'num_negative_changes:', res.data.num_negative_changes,
-        //  'avg_negative_change:', res.data.avg_negative_change
         );
     } catch (e) {
       console.error('Failed to fetch volatility data:', e);
@@ -32,8 +29,7 @@ const VolatilityAnalysis = ({ ticker, loading, showChart, setShowChart }) => {
   };
 
   useEffect(() => {
-    updateVolatilityData();
-    // console.log('Volatility Updated');
+    updateVolatilityData();  
   }, [ticker, interval, period]);
 
   return (

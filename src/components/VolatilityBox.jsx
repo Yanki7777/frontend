@@ -3,7 +3,7 @@ import { Typography, Box, CircularProgress, Paper, Select, MenuItem, FormControl
 import axios from 'axios';
 import { baseUrl } from '../utils/config';
 
-function SpyVolatility() {
+function VolatilityBox() {
   const [ticker, setTicker] = useState('SPY');
   const [interval, setInterval] = useState('1d');
   const [period, setPeriod] = useState('5d');
@@ -115,4 +115,4 @@ function SpyVolatility() {
   );
 }
 
-export default SpyVolatility;
+export default VolatilityBox;

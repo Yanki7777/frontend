@@ -7,7 +7,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 
 // components
 import Header from './components/Header';
-import SpyVolatility from './components/SpyVolatility';
+import VolatilityBox from './components/VolatilityBox';
 import FearAndGreed from './components/FearAndGreed';
 import SelectUniverse from './components/SelectUniverse';
 import BuildPortfolio from './components/BuildPortfolio';
@@ -20,7 +20,6 @@ import TickerInfo from './components/TickerInfo';
 import Trade from './components/Trade';
 import TickerRotator from './components/TickerRotator';
 import MarketAI from './components/MarketAI';
-import ChatComponent from './components/ChatComponent';
 import AnalysisSummary from './components/AnalysisSummary';
 import TAAnalyzeDisplay from './components/TAAnalyzeDisplay';
 
@@ -287,7 +286,7 @@ function App() {
                   <Grid container spacing={2}>
 
                     <Grid item xs={12}>
-                      <SpyVolatility />
+                      <VolatilityBox />
                     </Grid>
                   </Grid>
                 </Paper>
