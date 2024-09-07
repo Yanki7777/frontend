@@ -20,12 +20,14 @@ const TradeRow = memo(({ trade_item, activeTicker, onClickTicker }) => (
     <TableCell>{trade_item.tv_ma1_recommendation}</TableCell>
     <TableCell>{trade_item.tv_osc1_recommendation}</TableCell>
     <TableCell>{trade_item.tv_rsi1}</TableCell>
-    <TableCell>{JSON.stringify(trade_item.last_two_indicators_interval1).substring(0, 30)}</TableCell>
+    <TableCell>{JSON.stringify(trade_item.ta_interval1_1).substring(0, 20)}</TableCell>
+    <TableCell>{JSON.stringify(trade_item.ta_interval1_2).substring(0, 20)}</TableCell>
     <TableCell>{trade_item.tv_ind2_recommendation}</TableCell>
     <TableCell>{trade_item.tv_ma2_recommendation}</TableCell>
     <TableCell>{trade_item.tv_osc2_recommendation}</TableCell>
     <TableCell>{trade_item.tv_rsi2}</TableCell>
-    <TableCell>{JSON.stringify(trade_item.last_two_indicators_interval2).substring(0, 30)}</TableCell>
+    <TableCell>{JSON.stringify(trade_item.ta_interval2_1).substring(0, 20)}</TableCell>
+    <TableCell>{JSON.stringify(trade_item.ta_interval2_2).substring(0, 20)}</TableCell>
     <TableCell>{trade_item.analyst_recommendation}</TableCell>
   </TableRow>
 ));
@@ -70,12 +72,14 @@ const Trade = ({ loading, portfolio, setTicker, setExchange, handleAnalyze }) =>
       'MA1',
       'Osc1',
       'RSI1',
-      'TA1',
+      'TA1_1',
+      'TA1_2',
       'Ind2',
       'MA2',
       'Osc2',
       'RSI2',
-      'TA2',
+      'TA2_1',
+      'TA2_2',
       'Analyst',
     ];
 
@@ -86,12 +90,14 @@ const Trade = ({ loading, portfolio, setTicker, setExchange, handleAnalyze }) =>
       trade_item.tv_ma1_recommendation,
       trade_item.tv_osc1_recommendation,
       trade_item.tv_rsi1,
-      JSON.stringify(trade_item.last_two_indicators_interval1), // Break down list of dicts into JSON string
+      JSON.stringify(trade_item.ta_interval1_1), 
+      JSON.stringify(trade_item.ta_interval1_2), 
       trade_item.tv_ind2_recommendation,
       trade_item.tv_ma2_recommendation,
       trade_item.tv_osc2_recommendation,
       trade_item.tv_rsi2,
-      JSON.stringify(trade_item.last_two_indicators_interval2), // Break down list of dicts into JSON string
+      JSON.stringify(trade_item.ta_interval2_1), 
+      JSON.stringify(trade_item.ta_interval2_2), 
       trade_item.analyst_recommendation,
     ]);
 
@@ -167,12 +173,14 @@ const Trade = ({ loading, portfolio, setTicker, setExchange, handleAnalyze }) =>
                 <TableCell>MA1</TableCell>
                 <TableCell>Osc1</TableCell>
                 <TableCell>RSI1</TableCell>
-                <TableCell>TA1</TableCell>
+                <TableCell>TA1_1</TableCell>
+                <TableCell>TA1_2</TableCell>
                 <TableCell>Ind2</TableCell>
                 <TableCell>MA2</TableCell>
                 <TableCell>Osc2</TableCell>
                 <TableCell>RSI2</TableCell>
-                <TableCell>TA2</TableCell>
+                <TableCell>TA2_1</TableCell>
+                <TableCell>TA2_2</TableCell>
                 <TableCell>Analyst</TableCell>
               </TableRow>
             </TableHead>
