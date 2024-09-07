@@ -92,29 +92,27 @@ function VolatilityBox() {
           </FormControl>
         </Box>
         
-        <Button variant="contained" color="primary" onClick={updateVolatilityData} size="small">
-          Update
-        </Button>
-      </Box>
-      
-      {loading && <CircularProgress size={24} />}
-      
-      {error && <Typography color="error">{error}</Typography>}
-      
-      {data && (
-        <Box mt={1}>
-          {data.change_summary.num_positive_changes !== undefined && (
-            <Typography variant="body2" sx={{ color: 'green', textAlign:'center' }}>
-              {`Num: ${data.change_summary.num_positive_changes}  Avg: ${data.change_summary.avg_positive_change}%  Max: ${data.change_summary.max_positive_change}%`}
-            </Typography>
-          )}
-          {data.change_summary.num_negative_changes !== undefined && (
-            <Typography variant="body2" sx={{ color: 'red', textAlign:'center' }}>
-              {`Num: ${data.change_summary.num_negative_changes}  Avg: ${data.change_summary.avg_negative_change}%  Max: ${data.change_summary.max_negative_change}%`}
-            </Typography>
+                <Box display="flex" alignItems="center" gap={1}>
+          <Button variant="contained" color="primary" onClick={updateVolatilityData} size="small" sx={{ maxWidth: '20px' }}>
+            Update
+          </Button>
+          {loading && <CircularProgress size={24} />}
+          {error && <Typography color="error">{error}</Typography>}
+          {data && (
+            <Box display="flex" flexDirection="column" ml={2} flex={1}>
+              {data.change_summary.num_positive_changes !== undefined && (
+                <Typography variant="body2" sx={{ color: 'green', textAlign: 'left', fontSize:'1.2rem'}}>
+                  {`Num:${data.change_summary.num_positive_changes}  Avg:${data.change_summary.avg_positive_change}%  Max:${data.change_summary.max_positive_change}%`}
+                </Typography>
+              )}
+              {data.change_summary.num_negative_changes !== undefined && (
+                <Typography variant="body2" sx={{ color: 'red', textAlign: 'left' , fontSize:'1.2rem'}}>
+                  {`Num:${data.change_summary.num_negative_changes}  Avg:${data.change_summary.avg_negative_change}%  Max:${data.change_summary.max_negative_change}%`}                </Typography>
+              )}
+            </Box>
           )}
         </Box>
-      )}
+      </Box>
     </Paper>
   );
 }

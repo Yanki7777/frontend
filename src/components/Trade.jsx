@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import {Box, Button, CircularProgress, Paper, Typography, Table, TableBody, TableCell, TableHead, TableRow, } from '@mui/material';
+import { Box, Button, CircularProgress, Paper, Typography, Table, TableBody, TableCell, TableHead, TableRow, } from '@mui/material';
 import { memo } from 'react';
 import { saveAs } from 'file-saver';
 
@@ -20,10 +20,12 @@ const TradeRow = memo(({ trade_item, activeTicker, onClickTicker }) => (
     <TableCell>{trade_item.tv_ma1_recommendation}</TableCell>
     <TableCell>{trade_item.tv_osc1_recommendation}</TableCell>
     <TableCell>{trade_item.tv_rsi1}</TableCell>
+    <TableCell>{JSON.stringify(trade_item.last_two_indicators_interval1).substring(0, 30)}</TableCell>
     <TableCell>{trade_item.tv_ind2_recommendation}</TableCell>
     <TableCell>{trade_item.tv_ma2_recommendation}</TableCell>
     <TableCell>{trade_item.tv_osc2_recommendation}</TableCell>
     <TableCell>{trade_item.tv_rsi2}</TableCell>
+    <TableCell>{JSON.stringify(trade_item.last_two_indicators_interval2).substring(0, 30)}</TableCell>
     <TableCell>{trade_item.analyst_recommendation}</TableCell>
   </TableRow>
 ));
@@ -49,69 +51,70 @@ const Trade = ({ loading, portfolio, setTicker, setExchange, handleAnalyze }) =>
 
   const hasTrades = portfolio?.trades?.length > 0;
 
-      const downloadCSV = () => {
-      if (!hasTrades) return;
-    
-      // Extract portfolio fields
-      const portfolioFields = [
-        ['Universe', portfolio.universe || 'universe'],
-        ['Timestamp', portfolio.creation_date || 'unknown'], // Use creation_date from portfolio
-        ['Interval1', portfolio.interval1],
-        ['Interval2', portfolio.interval2],
-        ['Stocks', portfolio.trades.length],
-      ];
-    
-      const csvHeaders = [
-        'Exchange',
-        'Ticker',
-        'Ind1',
-        'MA1',
-        'Osc1',
-        'RSI1',
-        'Ind2',
-        'MA2',
-        'Osc2',
-        'RSI2',
-        'Analyst',
-      ];
-    
-      const rows = portfolio.trades.map(trade_item => [
-        trade_item.exchange,
-        trade_item.ticker,
-        trade_item.tv_ind1_recommendation,
-        trade_item.tv_ma1_recommendation,
-        trade_item.tv_osc1_recommendation,
-        trade_item.tv_rsi1,
-        trade_item.tv_ind2_recommendation,
-        trade_item.tv_ma2_recommendation,
-        trade_item.tv_osc2_recommendation,
-        trade_item.tv_rsi2,
-        trade_item.analyst_recommendation,
-      ]);
-    
-      const csvContent = [
-        ...portfolioFields.map(field => field.join(',')), // Add portfolio fields
-        '', // Add an empty line to separate portfolio fields from headers
-        csvHeaders.join(','), // Add headers
-        ...rows.map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(',')) // Add rows
-      ].join('\n');
-    
-      // Get the universe name and creation date for the file name
-      const universeName = portfolio.universe || 'universe';
-      const creationDate = (portfolio.creation_date || 'unknown').replace(/[:]/g, '-').replace(/\..+/, ''); // Format: YYYY-MM-DDTHH-MM-SS
-    
-      const fileName = `portfolio-${universeName}-${creationDate}.csv`;
-    
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      saveAs(blob, fileName);
-    };
+  const downloadCSV = () => {
+    if (!hasTrades) return;
 
-    const handleTrade = () => {
-      
-    }
-  
+    // Extract portfolio fields
+    const portfolioFields = [
+      ['Universe', portfolio.universe || 'universe'],
+      ['Timestamp', portfolio.creation_date || 'unknown'],
+      ['Interval1', portfolio.interval1],
+      ['Interval2', portfolio.interval2],
+      ['Stocks', portfolio.trades.length],
+    ];
+
+    const csvHeaders = [
+      'Exchange',
+      'Ticker',
+      'Ind1',
+      'MA1',
+      'Osc1',
+      'RSI1',
+      'TA1',
+      'Ind2',
+      'MA2',
+      'Osc2',
+      'RSI2',
+      'TA2',
+      'Analyst',
+    ];
+
+    const rows = portfolio.trades.map(trade_item => [
+      trade_item.exchange,
+      trade_item.ticker,
+      trade_item.tv_ind1_recommendation,
+      trade_item.tv_ma1_recommendation,
+      trade_item.tv_osc1_recommendation,
+      trade_item.tv_rsi1,
+      JSON.stringify(trade_item.last_two_indicators_interval1), // Break down list of dicts into JSON string
+      trade_item.tv_ind2_recommendation,
+      trade_item.tv_ma2_recommendation,
+      trade_item.tv_osc2_recommendation,
+      trade_item.tv_rsi2,
+      JSON.stringify(trade_item.last_two_indicators_interval2), // Break down list of dicts into JSON string
+      trade_item.analyst_recommendation,
+    ]);
+
+    const csvContent = [
+      ...portfolioFields.map(field => field.join(',')),
+      '',
+      csvHeaders.join(','),
+      ...rows.map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(',')),
+    ].join('\n');
+
+    const universeName = portfolio.universe || 'universe';
+    const creationDate = (portfolio.creation_date || 'unknown').replace(/[:]/g, '-').replace(/\..+/, ''); // Format: YYYY-MM-DDTHH-MM-SS
+
+    const fileName = `portfolio-${universeName}-${creationDate}.csv`;
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, fileName);
+  };
+
+  const handleTrade = () => {};
+
   return (
-    <Paper elevation={3} sx={{ padding: 1, minHeight: '650px' , display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Paper elevation={3} sx={{ padding: 1, minHeight: '650px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
       <Box display="flex" justifyContent="center" sx={{ marginBottom: 1 }}>
         <Button
           variant="contained"
@@ -164,10 +167,12 @@ const Trade = ({ loading, portfolio, setTicker, setExchange, handleAnalyze }) =>
                 <TableCell>MA1</TableCell>
                 <TableCell>Osc1</TableCell>
                 <TableCell>RSI1</TableCell>
+                <TableCell>TA1</TableCell>
                 <TableCell>Ind2</TableCell>
                 <TableCell>MA2</TableCell>
                 <TableCell>Osc2</TableCell>
                 <TableCell>RSI2</TableCell>
+                <TableCell>TA2</TableCell>
                 <TableCell>Analyst</TableCell>
               </TableRow>
             </TableHead>
@@ -193,19 +198,18 @@ const Trade = ({ loading, portfolio, setTicker, setExchange, handleAnalyze }) =>
         </Box>
       )}
 
-{hasTrades && (
-  <Box display="flex" justifyContent="center" sx={{ marginTop: 2 }}>
-    <Button
-      variant="contained"
-      color="secondary"
-      onClick={downloadCSV}
-      sx={{ width: '150px', marginTop: 'auto' }}  // Adjust the width as needed
-    >
-      CSV
-    </Button>
-  </Box>
-)}
-
+      {hasTrades && (
+        <Box display="flex" justifyContent="center" sx={{ marginTop: 2 }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={downloadCSV}
+            sx={{ width: '150px', marginTop: 'auto' }}  // Adjust the width as needed
+          >
+            CSV
+          </Button>
+        </Box>
+      )}
     </Paper>
   );
 };
