@@ -22,11 +22,11 @@ const RecommendationCounts = ({ portfolio }) => {
       analyst: { 'STRONG_BUY': 0, 'BUY': 0, 'NEUTRAL': 0, 'SELL': 0, 'STRONG_SELL': 0 },
     };
 
-    portfolio?.tickers?.forEach((ticker) => {
-      const indRecommendation = ticker.ta_ind1_recommendation?.trim() || '';
-      const maRecommendation = ticker.ta_ma1_recommendation?.trim() || '';
-      const oscRecommendation = ticker.ta_osc1_recommendation?.trim() || '';
-      const analystRecommendation = ticker.analyst_recommendation?.trim() || '';
+    portfolio?.trades?.forEach((trade) => {
+      const indRecommendation = trade.tv_ind1_recommendation?.trim() || '';
+      const maRecommendation = trade.tv_ma1_recommendation?.trim() || '';
+      const oscRecommendation = trade.tv_osc1_recommendation?.trim() || '';
+      const analystRecommendation = trade.analyst_recommendation?.trim() || '';
 
       if (counts.ind.hasOwnProperty(indRecommendation)) {
         counts.ind[indRecommendation] += 1;
@@ -152,7 +152,7 @@ const RecommendationCounts = ({ portfolio }) => {
   }), []);
 
   return (
-    portfolio?.tickers?.length > 0 && (
+    portfolio?.trades?.length > 0 && (
       <div style={{ height: '300px' }}>
         <Bar data={recommendationData} options={chartOptions} />
       </div>
