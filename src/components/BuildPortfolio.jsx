@@ -4,7 +4,7 @@ import axios from 'axios';
 import { baseUrl } from '../utils/config';
 import RecommendationCounts from './RecommendationCounts';
 
-const intervals = ["1m", "5m", "15m", "30m", "1h", "2h", "4h", "1d", "1W", "1M"];
+const intervals = ["1m", "5m", "15m", "30m", "1h", "1d", "1W", "1M"];
 const sectorOptions = ['Technology', 'Healthcare', 'Financial Services', 'Consumer Cyclical', 'Consumer Defensive', 'Industrials', 'Utilities', 'Basic Materials', 'Real Estate', 'Communication Services', 'Energy'];
 const marketCapOptions = ['Micro', 'Small', 'Mid', 'Big', 'Mega'];
 
