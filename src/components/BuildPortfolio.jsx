@@ -8,14 +8,12 @@ const intervals = ["1m", "5m", "15m", "30m", "1h", "2h", "4h", "1d", "1W", "1M"]
 const sectorOptions = ['Technology', 'Healthcare', 'Financial Services', 'Consumer Cyclical', 'Consumer Defensive', 'Industrials', 'Utilities', 'Basic Materials', 'Real Estate', 'Communication Services', 'Energy'];
 const marketCapOptions = ['Micro', 'Small', 'Mid', 'Big', 'Mega'];
 
-// Reusable Checkbox Group Component
 const CheckboxGroup = ({
   renderList, title, prefix, requiredRecommendations, onChangeHandler,
-  rsiValue, onRsiChange, rsiLabel, macdGap, onMacdGapChange, macdHist, onMacdHistChange
+  rsiValue, onRsiChange, rsiLabel, macdCrossover, onMacdCrossoverChange, macdHistShift, onMacdHistShiftChange
 }) => (
-  <Box sx={{ marginBottom: 0, display: 'flex', alignItems: 'center', gap: 2 }}>
+  <Box sx={{ marginBottom: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
     <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1, maxWidth: '100%' }}>
-      <strong>{title}: </strong>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0 }}>
         {renderList.map((item) => (
           <FormControlLabel
@@ -33,36 +31,32 @@ const CheckboxGroup = ({
           />
         ))}
       </Box>
+      <strong>{title}: </strong>
     </Box>
-    {/* MACD Gap field */}
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      <FormLabel component="legend" sx={{ marginRight: 2 }}><strong>MACD Gap</strong></FormLabel>
-      <TextField
-        type="number"
-        value={macdGap}
-        onChange={onMacdGapChange}
-        variant="outlined"
+
+    {/* MACD Crossover field */}
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+      <Checkbox
+        checked={macdCrossover}
+        onChange={onMacdCrossoverChange}
         size="small"
-        inputProps={{ step: 0.01 }}
-        sx={{ width: '90px' }}
       />
+      <FormLabel component="legend" sx={{ marginRight: 1 }}><strong>MACD Crossover</strong></FormLabel>
     </Box>
+
     {/* MACD Hist field */}
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      <FormLabel component="legend" sx={{ marginRight: 2 }}><strong>MACD Hist</strong></FormLabel>
-      <TextField
-        type="number"
-        value={macdHist}
-        onChange={onMacdHistChange}
-        variant="outlined"
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+      <Checkbox
+        checked={macdHistShift}
+        onChange={onMacdHistShiftChange}
         size="small"
-        inputProps={{ step: 0.01 }}
-        sx={{ width: '90px' }}
       />
+      <FormLabel component="legend" sx={{ marginRight: 1 }}><strong>MACD Hist</strong></FormLabel>
     </Box>
+
     {/* RSI field */}
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      <FormLabel component="legend" sx={{ marginRight: 2 }}><strong>{rsiLabel}</strong></FormLabel>
+      <FormLabel component="legend" sx={{ marginRight: 0 }}><strong>{rsiLabel}</strong></FormLabel>
       <TextField
         type="number"
         value={rsiValue}
@@ -75,6 +69,7 @@ const CheckboxGroup = ({
     </Box>
   </Box>
 );
+
 
 const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioInterval1, setPortfolioInterval2, setPortfolio, portfolio, portfolioLoading, setPortfolioLoading, selectedUniverse }) => {
 
@@ -92,16 +87,21 @@ const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioIn
   const [selectedMarketCaps, setSelectedMarketCaps] = useState(marketCapOptions);
   const [rsi1Below, setRsi1Below] = useState(100);
   const [rsi2Below, setRsi2Below] = useState(100);
-  const [macdGap1, setMacdGap1] = useState(3.0);
-  const [macdGap2, setMacdGap2] = useState(3.0);
-  const [macdHist1, setMacdHist1] = useState(1.0);
-  const [macdHist2, setMacdHist2] = useState(1.0);
+  const [macdCrossover1, setMacdCrossover1] = useState(false);
+  const [macdCrossover2, setMacdCrossover2] = useState(false);
+  const [macdHistShift1, setMacdHistShift1] = useState(false);
+  const [macdHistShift2, setMacdHistShift2] = useState(false);
 
   const [error, setError] = useState(null); // Error state
 
   const handleInputChange = useCallback((setter) => (event) => {
     setter(event.target.value);
   }, []);
+
+  const handleCheckboxChange = useCallback((setter) => (event) => {
+    setter(event.target.checked); // Since it's a boolean
+  }, []);
+  
 
   const handleBuildPortfolio = async () => {
     setPortfolioLoading(true);
@@ -116,10 +116,10 @@ const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioIn
         selectedMarketCaps,
         rsi1Below,
         rsi2Below,
-        macdGap1,
-        macdGap2,
-        macdHist1,
-        macdHist2
+        macdCrossover1,
+        macdCrossover2,
+        macdHistShift1,
+        macdHistShift2
       });
       if (response.status === 200) {
         const portfolio = response.data;
@@ -219,10 +219,10 @@ const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioIn
           rsiValue={rsi1Below}
           onRsiChange={handleInputChange(setRsi1Below)}
           rsiLabel="RSI 1 below"
-          macdGap={macdGap1}
-          onMacdGapChange={handleInputChange(setMacdGap1)}
-          macdHist={macdHist1}
-          onMacdHistChange={handleInputChange(setMacdHist1)}
+          macdCrossover={macdCrossover1}
+          onMacdCrossoverChange={handleCheckboxChange(setMacdCrossover1)} // Updated
+          macdHistShift={macdHistShift1}
+          onMacdHistShiftChange={handleCheckboxChange(setMacdHistShift1)} // Updated
         />
 
         {/* TA Interval 2 Section */}
@@ -258,10 +258,10 @@ const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioIn
           rsiValue={rsi2Below}
           onRsiChange={handleInputChange(setRsi2Below)}
           rsiLabel="RSI 2 below"
-          macdGap={macdGap2}
-          onMacdGapChange={handleInputChange(setMacdGap2)}
-          macdHist={macdHist2}
-          onMacdHistChange={handleInputChange(setMacdHist2)}
+          macdCrossover={macdCrossover2}
+          onMacdCrossoverChange={handleCheckboxChange(setMacdCrossover2)} // Updated
+          macdHistShift={macdHistShift2}
+          onMacdHistShiftChange={handleCheckboxChange(setMacdHistShift2)} // Updated
         />
 
         {/* Analyst and Other Inputs */}
