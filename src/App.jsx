@@ -160,6 +160,7 @@ function App() {
         axios.post(`${baseUrl}/news_sentiment`, { ticker }),
       ]);
 
+      console.log('------------------ Handle Analyze ------------------');
       setYfInfo(yfInfoResponse.data.ticker_info);
       setFmpQuote(fmpQuoteResponse.data);
       setTickerRTData(realTimeDataResponse.data.stock_data);

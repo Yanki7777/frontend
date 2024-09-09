@@ -6,8 +6,7 @@ import { saveAs } from 'file-saver';
 import Papa from 'papaparse';
 
 const TAAnalyzeDisplay = ({ taData, loading }) => {
-  const headerRef = useRef(null);
-  const bodyRef = useRef(null);
+  const tableRef = useRef(null);
 
   const handleDownloadCSV = () => {
     if (taData && taData.indicators_list && Object.keys(taData.indicators_list).length > 0) {
@@ -24,16 +23,6 @@ const TAAnalyzeDisplay = ({ taData, loading }) => {
     } else {
       console.error("No data found or empty data in indicators_list");
     }
-  };
-
-  const syncScroll = (source, target) => {
-    target.scrollLeft = source.scrollLeft;
-  };
-
-  const handleHorizontalScroll = (e) => {
-    const source = e.target;
-    const target = source === headerRef.current ? bodyRef.current : headerRef.current;
-    syncScroll(source, target);
   };
 
   if (loading) {
@@ -56,6 +45,7 @@ const TAAnalyzeDisplay = ({ taData, loading }) => {
 
   const indicatorKeys = Object.keys(taData.indicators_list[Object.keys(taData.indicators_list)[0]]);
   const timestamps = Object.keys(taData.indicators_list).reverse();
+ 
 
   return (
     <Paper elevation={3} sx={{ padding: 1, borderRadius: 2, position: 'relative', overflow: 'hidden', height: '94%', width: '92%' }}>
@@ -74,49 +64,36 @@ const TAAnalyzeDisplay = ({ taData, loading }) => {
         </Typography>
       </Box>
 
-      {/* Horizontal Scroll for Datetime Header */}
+      {/* Scrollable Table */}
       <Box
-        sx={{ overflowX: 'auto', marginBottom: 1 }}
-        ref={headerRef}
-        onScroll={handleHorizontalScroll}
+        sx={{ maxHeight: 700, overflow: 'auto', border: '1px solid lightgray', borderRadius: 1 }}
+        ref={tableRef}
       >
         <TableContainer>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
                 <TableCell>Indicator</TableCell>
-                {timestamps.map((timestamp) => (
-                  <TableCell key={timestamp}>
-                    {timestamp}
+                {taData.indicators_list.slice().reverse().map((data) => (
+                  <TableCell key={data.Datetime}>
+                    {data.Datetime}
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
-          </Table>
-        </TableContainer>
-      </Box>
-
-      {/* Scrollable Indicators Table */}
-      <Box
-        sx={{ maxHeight: 700, overflowY: 'auto', border: '1px solid lightgray', borderRadius: 1 }}
-        ref={bodyRef}
-        onScroll={handleHorizontalScroll}
-      >
-        <TableContainer>
-          <Table>
             <TableBody>
-              {indicatorKeys.map((indicator) => (
-                <TableRow key={indicator}>
-                  <TableCell>{indicator}</TableCell>
-                  {timestamps.map((timestamp) => (
-                    <TableCell key={timestamp}>
-                      {taData.indicators_list[timestamp][indicator] !== undefined
-                        ? taData.indicators_list[timestamp][indicator]
-                        : 'No data'}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
+              {Object.keys(taData.indicators_list[0])
+                .filter(indicator => indicator !== 'Datetime')
+                .map((indicator) => (
+                  <TableRow key={indicator}>
+                    <TableCell>{indicator}</TableCell>
+                    {taData.indicators_list.slice().reverse().map((dataPoint, index) => (
+                      <TableCell key={index}>
+                        {dataPoint[indicator] !== undefined ? dataPoint[indicator] : 'No data'}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
