@@ -1,32 +1,50 @@
 import { Box, Paper, Typography, Button, ButtonGroup, CircularProgress } from '@mui/material';
 import axios from 'axios';
 import React from 'react';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 import { baseUrl } from '../utils/config';
 
 const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading }) => {
   const [period, setPeriod] = React.useState('10y');  
+  const [macdData, setMacdData] = React.useState(null); // State for MACD data
+  const [macdLoading, setMacdLoading] = React.useState(false); // State to show loading for MACD
+  const [interval, setInterval] = React.useState('1d'); // Default interval for MACD
 
   const updateHistoricalPrices = React.useCallback(async () => {
     try {
-      // console.time('historical_data'); 
-      const res = await axios.post(`${baseUrl}/historical-data`, { ticker, period: period });
-      setHistoricalPrices({data:res.data.historical_data,period:period});      
-      // console.timeEnd('historical_data');
+      const res = await axios.post(`${baseUrl}/historical-data`, { ticker, period });
+      setHistoricalPrices({ data: res.data.historical_data, period });
     } catch (e) {
       console.error('Failed to fetch historical data:', e);
     }
-  }, [period, ticker]);
+  }, [period, ticker, setHistoricalPrices]);
 
   React.useEffect(() => {
     updateHistoricalPrices();
   }, [period, ticker, updateHistoricalPrices]);
-  
-  React.useEffect(() => {
-    if (chartData && chartData.period !== period) {
-      updateHistoricalPrices();
+
+  const fetchMACDData = async () => {
+    setMacdLoading(true);
+    try {
+      const res = await axios.post(`${baseUrl}/ta-macd-data`, {
+        ticker,
+        tickerInterval: interval // Sending interval with the request
+      });
+      
+      const macdData = res.data.macd_data.map(item => ({
+        date: item.timestamp,
+        macd: item.MACD,
+        signal: item.MACD_Signal,
+        histogram: item.MACD_Hist
+      }));
+
+      setMacdData(macdData);
+    } catch (e) {
+      console.error('Failed to fetch MACD data:', e);
+    } finally {
+      setMacdLoading(false);
     }
-  }, [chartData]);
+  };
 
   const periods = [
     { label: '1 Day', value: '1d' },
@@ -102,6 +120,69 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
               No chart available.<br /> Analyze ticker to get chart
             </Typography>
           )
+        )}
+
+        {/* MACD Button */}
+        <Button
+          variant="contained"
+          onClick={fetchMACDData}
+          sx={{ mt: 2 }}
+          disabled={macdLoading || loading}
+        >
+          {macdLoading ? <CircularProgress size={20} /> : 'MACD Graph'}
+        </Button>
+
+        {/* MACD Chart */}
+        {macdData && (
+          <Box sx={{ width: '100%', marginTop: 3 }}>
+            <Typography variant="h6" sx={{ textAlign: 'center' }}>
+              MACD Graph
+            </Typography>
+            <Line
+              data={{
+                labels: macdData.map(item => item.date), // Use timestamps for X-axis
+                datasets: [
+                  {
+                    label: 'MACD',
+                    data: macdData.map(item => item.macd),
+                    borderColor: 'blue',
+                    fill: false,
+                  },
+                  {
+                    label: 'Signal',
+                    data: macdData.map(item => item.signal),
+                    borderColor: 'orange',
+                    fill: false,
+                  },
+                ],
+              }}
+              options={{
+                maintainAspectRatio: false,
+              }}
+            />
+
+            {/* MACD Histogram */}
+            <Typography variant="h6" sx={{ textAlign: 'center', marginTop: 2 }}>
+              MACD Histogram
+            </Typography>
+            <Bar
+              data={{
+                labels: macdData.map(item => item.date), // Same timestamps as above
+                datasets: [
+                  {
+                    label: 'Histogram',
+                    data: macdData.map(item => item.histogram),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                  },
+                ],
+              }}
+              options={{
+                maintainAspectRatio: false,
+              }}
+            />
+          </Box>
         )}
       </Paper>
     </Box>
