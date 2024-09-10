@@ -12,7 +12,7 @@ import FearAndGreed from './components/FearAndGreed';
 import SelectUniverse from './components/SelectUniverse';
 import BuildPortfolio from './components/BuildPortfolio';
 import AnalyzeTickerForm from './components/AnalyzeTickerForm';
-import HistoricalPricesChart from './components/HistoricalPricesChart';
+import TickerChart from './components/TickerChart';
 import NewsSentiment from './components/NewsSentiment';
 import InsiderTrading from './components/InsiderTrading';
 import TradingViewAnalysis from './components/TradingViewAnalysis';
@@ -368,7 +368,7 @@ function App() {
             </Grid>
             <Grid item lg={4} xs={12} md={6}>
               <Box display="flex" height="100%">
-                <HistoricalPricesChart
+                <TickerChart
                   setHistoricalPrices={setHistoricalPrices}
                   chartData={chartData}
                   loading={tickerAnalysisLoading}

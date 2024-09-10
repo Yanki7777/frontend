@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import { baseUrl } from '../utils/config';
 
-const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading }) => {
+const TickerChart = ({ chartData, setHistoricalPrices, ticker, loading }) => {
   const [period, setPeriod] = useState('10y');
   const [macdData, setMacdData] = useState(null); // State for MACD data
   const [macdLoading, setMacdLoading] = useState(false); // State to show loading for MACD
@@ -23,7 +23,7 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
     console.log('Fetching MACD data for', ticker, ' period', period);
     try {
       const res = await axios.post(`${baseUrl}/ta-macd-data`, {
-        ticker,       
+        ticker,
         period: period
       });
 
@@ -60,7 +60,7 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
     { label: '10 Years', value: '10y' },
     { label: 'YTD', value: 'ytd' },
     { label: 'Max', value: 'max' },
-  ]; 
+  ];
 
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -131,11 +131,11 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
           </Box>
         ) : (
           macdData && (
-            <Box sx={{ width: '100%', height:'100%', marginTop: 3 }}>
+            <Box sx={{ width: '100%', height: '100%', marginTop: 3 }}>
               <Typography variant="h6" sx={{ textAlign: 'center' }}>
                 MACD Graph
               </Typography>
-              <Box sx={{ maxHeight: 1100, overflow: 'auto' }}>
+              <Box sx={{ height: '300px', overflow: 'auto' }}>
                 <Line
                   data={{
                     labels: macdData.map(item => item.timestamp), // Use timestamps for X-axis
@@ -156,7 +156,7 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
                   }}
                   options={{
                     maintainAspectRatio: false,
-                    height: 1100,
+                    height: 500,
                   }}
                 />
               </Box>
@@ -165,23 +165,27 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
               <Typography variant="h6" sx={{ textAlign: 'center', marginTop: 2 }}>
                 MACD Histogram
               </Typography>
-              <Box sx={{ maxHeight: 400, overflow: 'auto' }}>
+              <Box sx={{ height: '200px', overflow: 'auto' }}>
                 <Bar
                   data={{
-                    labels: macdData.map(item => item.timestamp), // Same timestamps as above
+                    labels: macdData.map(item => item.timestamp),
                     datasets: [
                       {
                         label: 'Histogram',
                         data: macdData.map(item => item.MACD_Hist),
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: macdData.map(item =>
+                          item.MACD_Hist >= 0 ? 'rgba(75, 192, 192, 0.6)' : 'rgba(255, 99, 132, 0.6)'
+                        ),
+                        borderColor: macdData.map(item =>
+                          item.MACD_Hist >= 0 ? 'rgba(75, 192, 192, 1)' : 'rgba(255, 99, 132, 1)'
+                        ),
                         borderWidth: 1,
                       },
                     ],
                   }}
                   options={{
                     maintainAspectRatio: false,
-                    height: 1100,
+                    height: 300,
                   }}
                 />
               </Box>
@@ -193,4 +197,4 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
   );
 };
 
-export default HistoricalPricesChart;
+export default TickerChart;
