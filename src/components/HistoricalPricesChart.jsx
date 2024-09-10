@@ -28,7 +28,7 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
       });
 
       const macdData = res.data.macd_data.map(item => ({
-        date: item.date,
+        date: item.timestamp,
         macd: item.macd,
         signal: item.signal,
         histogram: item.histogram
@@ -138,7 +138,7 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
               <Box sx={{ maxHeight: 400, overflow: 'auto' }}>
                 <Line
                   data={{
-                    labels: macdData.map(item => item.date), // Use timestamps for X-axis
+                    labels: macdData.map(item => item.timestamp), // Use timestamps for X-axis
                     datasets: [
                       {
                         label: 'MACD',
@@ -167,7 +167,7 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
               <Box sx={{ maxHeight: 400, overflow: 'auto' }}>
                 <Bar
                   data={{
-                    labels: macdData.map(item => item.date), // Same timestamps as above
+                    labels: macdData.map(item => item.timestamp), // Same timestamps as above
                     datasets: [
                       {
                         label: 'Histogram',
