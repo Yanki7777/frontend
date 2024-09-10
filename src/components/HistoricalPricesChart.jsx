@@ -24,14 +24,14 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
     try {
       const res = await axios.post(`${baseUrl}/ta-macd-data`, {
         ticker,       
-        period
+        period: period
       });
 
       const macdData = res.data.macd_data.map(item => ({
-        date: item.timestamp,
-        macd: item.macd,
-        signal: item.signal,
-        histogram: item.histogram
+        timestamp: item.timestamp,
+        MACD: item.MACD,
+        MACD_Signal: item.MACD_Signal,
+        MACD_Hist: item.MACD_Hist
       }));
 
       setMacdData(macdData);
@@ -100,7 +100,7 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
           </Box>
         ) : (
           chartData && chartData.datasets ? (
-            <Box sx={{ width: '100%', height: '100%', minHeight: '650px' }}>
+            <Box sx={{ width: '100%', height: '100%', minHeight: '300px' }}>
               <Line
                 data={chartData}
                 options={{
@@ -131,24 +131,24 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
           </Box>
         ) : (
           macdData && (
-            <Box sx={{ width: '100%', marginTop: 3 }}>
+            <Box sx={{ width: '100%', height:'100%', marginTop: 3 }}>
               <Typography variant="h6" sx={{ textAlign: 'center' }}>
                 MACD Graph
               </Typography>
-              <Box sx={{ maxHeight: 400, overflow: 'auto' }}>
+              <Box sx={{ maxHeight: 1100, overflow: 'auto' }}>
                 <Line
                   data={{
                     labels: macdData.map(item => item.timestamp), // Use timestamps for X-axis
                     datasets: [
                       {
                         label: 'MACD',
-                        data: macdData.map(item => item.macd),
+                        data: macdData.map(item => item.MACD),
                         borderColor: 'blue',
                         fill: false,
                       },
                       {
                         label: 'Signal',
-                        data: macdData.map(item => item.signal),
+                        data: macdData.map(item => item.MACD_Signal),
                         borderColor: 'orange',
                         fill: false,
                       },
@@ -156,6 +156,7 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
                   }}
                   options={{
                     maintainAspectRatio: false,
+                    height: 1100,
                   }}
                 />
               </Box>
@@ -171,7 +172,7 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
                     datasets: [
                       {
                         label: 'Histogram',
-                        data: macdData.map(item => item.histogram),
+                        data: macdData.map(item => item.MACD_Hist),
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 1,
@@ -180,6 +181,7 @@ const HistoricalPricesChart = ({ chartData, setHistoricalPrices, ticker, loading
                   }}
                   options={{
                     maintainAspectRatio: false,
+                    height: 1100,
                   }}
                 />
               </Box>

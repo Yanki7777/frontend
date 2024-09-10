@@ -6,7 +6,7 @@ export const INTERVALS = {SHORT: "15m", LONG: "1h",};
 export const DEFAULT_TICKER = "QQQ";                    // Default ticker
 export const DEFAULT_EXCHANGE = "NASDAQ";                 // Default exchange
 export const DEFAULT_SCREENER = "America";        // Default screener
-export const ENABLE_ROTATOR = true;               // Default screener
+export const ENABLE_ROTATOR = false;               // Default screener
 export const ENABLE_MARKET_AI = false;             // Default screener
 export const AI_ENABLED = false;                   // AI flag for TradingView analysis
 
