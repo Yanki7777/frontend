@@ -48,8 +48,7 @@ const TAAnalyzeDisplay = ({ taData, loading }) => {
  
 
   return (
-    <Paper elevation={3} sx={{ padding: 1, borderRadius: 2, position: 'relative', overflow: 'hidden', height: '94%', width: '92%' }}>
-      {/* Static Header for Ticker and Datetime */}
+    <Paper elevation={3} sx={{ padding: 1, borderRadius: 2, position: 'relative', overflow: 'hidden', height: '94%', width: '92%' }}>    
       <Box sx={{ textAlign: 'center', marginBottom: 2 }}>
         <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
           TA - {taData.ticker}
@@ -60,13 +59,12 @@ const TAAnalyzeDisplay = ({ taData, loading }) => {
         </Typography>
 
         <Typography variant="h6" gutterBottom>
-          {taData.timestamp}
+          Last: {taData.timestamp}
         </Typography>
       </Box>
-
-      {/* Scrollable Table */}
+      
       <Box
-        sx={{ maxHeight: 700, overflow: 'auto', border: '1px solid lightgray', borderRadius: 1 }}
+        sx={{ maxHeight: 800, overflow: 'auto', border: '1px solid lightgray', borderRadius: 1 }}
         ref={tableRef}
       >
         <TableContainer>
@@ -75,15 +73,15 @@ const TAAnalyzeDisplay = ({ taData, loading }) => {
               <TableRow>
                 <TableCell>Indicator</TableCell>
                 {taData.indicators_list.slice().reverse().map((data) => (
-                  <TableCell key={data.Datetime}>
-                    {data.Datetime}
+                  <TableCell key={data.timestamp}>
+                    {data.timestamp}
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {Object.keys(taData.indicators_list[0])
-                .filter(indicator => indicator !== 'Datetime')
+                .filter(indicator => indicator !== 'timestamp')
                 .map((indicator) => (
                   <TableRow key={indicator}>
                     <TableCell>{indicator}</TableCell>
