@@ -7,7 +7,6 @@ import Papa from 'papaparse';
 
 const TAAnalysisDisplay = ({ taData, loading }) => {
 
-  console.log("taData", taData);
   const tableRef = useRef(null);
 
   const handleDownloadCSV = () => {

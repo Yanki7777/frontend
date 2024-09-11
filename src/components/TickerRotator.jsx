@@ -4,17 +4,15 @@ import axios from 'axios';
 import { baseUrl } from '../utils/config';
 import './TickerRotator.css';
 import TickerModal from './TickerModal';
-import {getQuote} from "../api"
+//import {getQuote} from "../api"
 
 const rTickers = ['SPY', 'QQQ', 'MSFT', 'AMZN', 'TSLA', 'NVDA', 'GBTC', 'ETHE', 'BTC-USD', 'ETH-USD'];
 
 const fetchStockData = async (ticker) => {
     try {
-        // const response = await axios.post(`${baseUrl}/fmp-quote`, { ticker });
-        console.log("Start get quote")
-        const response = await getQuote(ticker);
-        console.log(response)
-        const { price, change, changesPercentage, previousClose, priceAvg50, timestamp, earningsAnnouncement } = response;
+        const response = await axios.post(`${baseUrl}/fmp-quote`, { ticker });     
+        //const response = await getQuote(ticker);
+        const { price, change, changesPercentage, previousClose, priceAvg50, timestamp, earningsAnnouncement } = response.data.fmp_quote;
 
         return {
             ticker,
