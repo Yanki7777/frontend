@@ -150,7 +150,7 @@ function App() {
       ] = await Promise.all([
         axios.post(`${baseUrl}/yf-ticker-info`, { ticker }),
         axios.post(`${baseUrl}/fmp-quote`, { ticker }),
-        axios.post(`${baseUrl}/fmp-real-time-price`, { ticker, exchange }),
+        // axios.post(`${baseUrl}/fmp-real-time-price`, { ticker, exchange }),
         axios.post(`${baseUrl}/ticker-insider-trading`, { ticker, type: 'all' }),
         axios.post(`${baseUrl}/tradingview_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval1, AI: AI_ENABLED }),
         axios.post(`${baseUrl}/tradingview_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval2, AI: AI_ENABLED }),
