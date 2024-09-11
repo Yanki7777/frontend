@@ -36,7 +36,7 @@ const AnalysisSection = ({ title, data, icon: Icon }) => {
 };
 
 
-const AnalysisSummary = ({ tradingViewAnalysis, tickerInterval, loading }) => {
+const TVAnalysisDisplay = ({ tradingViewAnalysis, tickerInterval, loading }) => {
   if (loading) {
     return (
       <Paper
@@ -112,4 +112,4 @@ const AnalysisSummary = ({ tradingViewAnalysis, tickerInterval, loading }) => {
 
 };
 
-export default AnalysisSummary;
+export default TVAnalysisDisplay;

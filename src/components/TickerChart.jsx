@@ -5,7 +5,7 @@ import { Line, Bar } from 'react-chartjs-2';
 import { baseUrl } from '../utils/config';
 
 const TickerChart = ({ chartData, setHistoricalPrices, ticker, loading }) => {
-  const [period, setPeriod] = useState('10y');
+  const [period, setPeriod] = useState('1d');
   const [macdData, setMacdData] = useState(null); // State for MACD data
   const [macdLoading, setMacdLoading] = useState(false); // State to show loading for MACD
 
@@ -72,20 +72,21 @@ const TickerChart = ({ chartData, setHistoricalPrices, ticker, loading }) => {
               <Button
                 key={frame.value}
                 onClick={() => setPeriod(frame.value)}
-                sx={{
-                  fontWeight: 'semi-bold',
-                  color: isSelected ? 'secondary.main' : 'inherit',
-                  borderColor: 'primary.main',
-                  borderLeft: index === 0 ? '1px solid rgba(0, 0, 0, 0.12)' : 'inherit',
-                  borderRight: '1px solid rgba(0, 0, 0, 0.12)',
-                  '&:hover': {
-                    backgroundColor: isSelected ? 'secondary.light' : 'inherit',
-                    borderColor: isSelected ? 'primary.dark' : 'primary.main',
-                  },
-                  '&:not(:first-of-type)': {
-                    borderLeft: 'none',
-                  },
-                }}
+                                                                sx={{
+                                  fontWeight: isSelected ? 'bold' : 'semi-bold', // Make the font weight bolder if selected
+                                  color: isSelected ? 'secondary.main' : 'inherit',
+                                  borderColor: 'primary.main',
+                                  borderLeft: index === 0 ? '1px solid rgba(0, 0, 0, 0.12)' : 'inherit',
+                                  borderRight: '1px solid rgba(0, 0, 0, 0.12)',
+                                  backgroundColor: isSelected ? 'rgba(255, 215, 0, 0.3)' : 'inherit', // Change background color to a lighter shade if selected
+                                  '&:hover': {
+                                    backgroundColor: isSelected ? 'rgba(255, 215, 0, 0.3)' : 'inherit',
+                                    borderColor: isSelected ? 'primary.dark' : 'primary.main',
+                                  },
+                                  '&:not(:first-of-type)': {
+                                    borderLeft: 'none',
+                                  },
+                                }}
                 disabled={loading}
               >
                 {frame.label}

@@ -5,7 +5,7 @@ import {
 import { saveAs } from 'file-saver';
 import Papa from 'papaparse';
 
-const TAAnalyzeDisplay = ({ taData, loading }) => {
+const TAAnalysisDisplay = ({ taData, loading }) => {
   const tableRef = useRef(null);
 
   const handleDownloadCSV = () => {
@@ -107,4 +107,4 @@ const TAAnalyzeDisplay = ({ taData, loading }) => {
   );
 };
 
-export default TAAnalyzeDisplay;
+export default TAAnalysisDisplay;

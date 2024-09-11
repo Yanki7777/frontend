@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Link, Divider, Menu, MenuItem, CircularProgress } from '@mui/material';
-import './TickerInfo.css'; // Import the CSS file where we define the animation
+import './TickerInfoDisplay.css'; // Import the CSS file where we define the animation
 
 function TickerInfo({ ticker, yfInfo, fmpQuote, tickerRTData, loading }) {
     const [flash, setFlash] = useState('');

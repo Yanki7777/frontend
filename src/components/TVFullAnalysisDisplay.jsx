@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Paper, Typography, CircularProgress } from '@mui/material';
 
-const TradingViewAnalysis = ({ tradingViewAnalysis, loading }) => {
+const TVFullAnalysisDisplay = ({ tradingViewAnalysis, loading }) => {
   return (
     <Box display="flex" sx={{ marginTop: 3, position: 'relative' }}>
       {loading ? (
@@ -75,4 +75,4 @@ const TradingViewAnalysis = ({ tradingViewAnalysis, loading }) => {
   );
 };
 
-export default TradingViewAnalysis;
+export default TVFullAnalysisDisplay;

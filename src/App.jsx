@@ -15,13 +15,13 @@ import AnalyzeTickerForm from './components/AnalyzeTickerForm';
 import TickerChart from './components/TickerChart';
 import NewsSentiment from './components/NewsSentiment';
 import InsiderTrading from './components/InsiderTrading';
-import TradingViewAnalysis from './components/TradingViewAnalysis';
-import TickerInfo from './components/TickerInfo';
+import TVFullAnalysisDisplay from './components/TVFullAnalysisDisplay';
+import TickerInfoDisplay from './components/TickerInfoDisplay';
 import Trade from './components/Trade';
 import TickerRotator from './components/TickerRotator';
-import MarketAI from './components/MarketAI';
-import AnalysisSummary from './components/AnalysisSummary';
-import TAAnalyzeDisplay from './components/TAAnalyzeDisplay';
+import MarketAIDisplay from './components/MarketAIDisplay';
+import TVAnalysisDisplay from './components/TVAnalysisDisplay';
+import TAAnalysisDisplay from './components/TAAnalysisDisplay';
 
 //utils
 import {
@@ -291,7 +291,7 @@ function App() {
                   </Grid>
                 </Paper>
 
-                <MarketAI
+                <MarketAIDisplay
                   marketAI={marketAI}
                   handleMarketAI={handleMarketAI}
                   loading={marketAiLoading}
@@ -327,7 +327,7 @@ function App() {
 
                 <Grid marginTop={2} lg={12} item xs={12} md={6}>
                   {yfInfo && fmpQuote && (
-                    <TickerInfo
+                    <TickerInfoDisplay
                       ticker={ticker}
                       yfInfo={yfInfo}
                       fmpQuote={fmpQuote}
@@ -341,28 +341,28 @@ function App() {
             <Grid lg={1} item xs={12} md={4}>
               <Box display="flex" height="100%">
                 <Paper elevation={3} sx={{ padding: 2, width: '100%', justifyContent: "center", alignItems: "center", display: "flex" }}>
-                  <AnalysisSummary loading={tickerAnalysisLoading} tradingViewAnalysis={tradingViewAnalysis1} />
+                  <TVAnalysisDisplay loading={tickerAnalysisLoading} tradingViewAnalysis={tradingViewAnalysis1} />
                 </Paper>
               </Box>
             </Grid>
             <Grid lg={1} item xs={12} md={4}>
               <Box display="flex" height="100%">
                 <Paper elevation={3} sx={{ padding: 2, width: '100%', justifyContent: "center", alignItems: "center", display: "flex" }}>
-                  <AnalysisSummary loading={tickerAnalysisLoading} tradingViewAnalysis={tradingViewAnalysis2} />
+                  <TVAnalysisDisplay loading={tickerAnalysisLoading} tradingViewAnalysis={tradingViewAnalysis2} />
                 </Paper>
               </Box>
             </Grid>
             <Grid lg={2} item xs={12} md={4}>
               <Box display="flex" height="100%">
                 <Paper elevation={3} sx={{ padding: 2, width: '100%', justifyContent: "center", alignItems: "center", display: "flex" }}>
-                  <TAAnalyzeDisplay loading={tickerAnalysisLoading} taData={taData1} />
+                  <TAAnalysisDisplay loading={tickerAnalysisLoading} taData={taData1} />
                 </Paper>
               </Box>
             </Grid>
             <Grid lg={2} item xs={12} md={4}>
               <Box display="flex" height="100%">
                 <Paper elevation={3} sx={{ padding: 2, width: '100%', justifyContent: "center", alignItems: "center", display: "flex" }}>
-                  <TAAnalyzeDisplay loading={tickerAnalysisLoading} taData={taData2} />
+                  <TAAnalysisDisplay loading={tickerAnalysisLoading} taData={taData2} />
                 </Paper>
               </Box>
             </Grid>
@@ -383,14 +383,14 @@ function App() {
           <Grid item lg={4} xs={12} md={1}>
             {tradingViewAnalysis1 && (
               <Box flex={1}>
-                <TradingViewAnalysis tradingViewAnalysis={tradingViewAnalysis1} loading={tickerAnalysisLoading} />
+                <TVFullAnalysisDisplay tradingViewAnalysis={tradingViewAnalysis1} loading={tickerAnalysisLoading} />
               </Box>
             )}
           </Grid>
           <Grid item lg={4} xs={12} md={1}>
             {tradingViewAnalysis2 && (
               <Box flex={1}>
-                <TradingViewAnalysis tradingViewAnalysis={tradingViewAnalysis2} loading={tickerAnalysisLoading} />
+                <TVFullAnalysisDisplay tradingViewAnalysis={tradingViewAnalysis2} loading={tickerAnalysisLoading} />
               </Box>
             )}
           </Grid>

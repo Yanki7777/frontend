@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Box, Paper, Typography, CircularProgress } from '@mui/material';
 import axios from 'axios';
 
-const MarketAI = ({ handleMarketTrend, loading, marketAI }) => {
+const MarketAIDisplay = ({ handleMarketTrend, loading, marketAI }) => {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -50,4 +50,4 @@ const MarketAI = ({ handleMarketTrend, loading, marketAI }) => {
   );
 };
 
-export default MarketAI;
+export default MarketAIDisplay;
