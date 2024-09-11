@@ -149,7 +149,7 @@ const TickerChart = ({ chartData, setHistoricalPrices, ticker, loading }) => {
                       {
                         label: 'Signal',
                         data: macdData.map(item => item.MACD_Signal),
-                        borderColor: 'orange',
+                        borderColor: 'red',
                         fill: false,
                       },
                     ],
