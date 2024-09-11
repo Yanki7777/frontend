@@ -14,6 +14,7 @@ import {
   Box,
 } from '@mui/material';
 import { baseUrl } from '../utils/config';
+import { getInsiderTradingUniverse } from '../api';
 
 const UniInsiderTrading= ( {selectedUniverse}) => {
   const [insiderTrades, setInsiderTrades] = useState([]);
@@ -22,10 +23,8 @@ const UniInsiderTrading= ( {selectedUniverse}) => {
 
   const fetchInsiderTrades = async () => {
     try {      
-      //console.log('UniIsiderTrading ---- Selected Universe:', selectedUniverse);
-      const res = await axios.post(`${baseUrl}/uni-insider-trading`, {selectedUniverse});
-      setInsiderTrades(res.data);
-      //console.log('Insider Trades:', res.data.insider_trading);     
+      const res = getInsiderTradingUniverse(selectedUniverse);
+      setInsiderTrades(res.data);   
     } catch (err) {
       setError('Failed to fetch insider buying data.');
     } finally {

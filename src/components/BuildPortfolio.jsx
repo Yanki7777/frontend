@@ -123,7 +123,6 @@ const BuildPortfolio = ({ portfolioInterval1, portfolioInterval2, setPortfolioIn
       });
       if (response.status === 200) {
         const portfolio = response.data;
-        console.log('built', portfolio);
         setPortfolio(portfolio);
         if (portfolio.length === 0) {
           setError('No Portfolio at this time.');

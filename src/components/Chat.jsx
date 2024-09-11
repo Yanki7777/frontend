@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Button, Paper, Typography } from '@mui/material';
 import marketBackground from '../utils/markets.png';
 
-console.log('Image path:', marketBackground); // Debugging step
+
 
 const Chat = ({ handleChat, loading }) => (
   <Paper

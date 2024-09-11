@@ -5,6 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import './ChatComponent.css'; // Import the CSS file
+import { chat, resetChat } from '../api';
 
 function ChatComponent({ yfInfo, portfolio, open, setOpen }) {
     const [messages, setMessages] = useState([]);
@@ -14,14 +15,14 @@ function ChatComponent({ yfInfo, portfolio, open, setOpen }) {
 
     const sendMessage = async () => {
         if (inputMessage.trim() === '') return;
-        console.log(portfolio, 'portfolio');
-        const response = await axios.post('http://localhost:5000/api/chat', { portfolio: portfolio, yfInfo: yfInfo, message: inputMessage });
+        const response = await chat(inputMessage, [portfolio, yfInfo])
+    
         setMessages([...messages, { role: 'user', content: inputMessage }, { role: 'assistant', content: response.data.response }]);
         setInputMessage('');
     };
 
     const resetConversation = async () => {
-        await axios.post('http://localhost:5000/api/reset-chat');
+        await resetChat();
         setMessages([]);
     };
 

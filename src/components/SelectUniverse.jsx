@@ -5,6 +5,7 @@ import { baseUrl } from '../utils/config';
 import { Dialog, DialogTitle, DialogContent, DialogActions,  IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import UniInsiderTrading from './UniInsiderTrading';
+import { getUniverses } from '../api';
 const SelectUniverse = ({ selectedUniverse, setSelectedUniverse, setTicker, setExchange, handleAnalyze }) => {
   const [universes, setUniverses] = useState([]);
   const [universe_tickers, setTickers] = useState([]);
@@ -16,7 +17,8 @@ const SelectUniverse = ({ selectedUniverse, setSelectedUniverse, setTicker, setE
     const fetchUniverses = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${baseUrl}/universes`);
+
+        const response =await getUniverses()
         setUniverses(response.data);
       } catch (err) {
         setError('Failed to fetch universes. Please try again later.');

@@ -3,6 +3,7 @@ import { Box, Paper, CircularProgress, Typography, Button, ButtonGroup } from '@
 import axios from 'axios';
 import { baseUrl } from '../utils/config';
 import VolatilityGraph from './VolatilityGraph'; // Import the new component
+import { getTickerVolatility } from '../api';
 
 const VolatilityAnalysis = ({ ticker, loading, showChart, setShowChart }) => {
   const [historicalClosingPrices, setHistoricalClosingPrices] = useState(null);
@@ -15,14 +16,11 @@ const VolatilityAnalysis = ({ ticker, loading, showChart, setShowChart }) => {
 
   const updateVolatilityData = async () => {
     try {
-      const res = await axios.post(`${baseUrl}/ticker-volatility`, { ticker, interval, period });    
-      setHistoricalClosingPrices(res.data.closing_prices);
-      setHistoricalChanges(res.data.percentage_changes);
-      setDates(res.data.dates);
-      setChangeSummary(res.data.change_summary);
-      console.log('VOLATILITY:', res.data,
-         'change_summery', res.data.change_summary,
-        );
+      const tickerVolatility = getTickerVolatility(ticker, period, interval);
+      setHistoricalClosingPrices(tickerVolatility.data.closing_prices);
+      setHistoricalChanges(tickerVolatility.data.percentage_changes);
+      setDates(tickerVolatility.data.dates);
+      setChangeSummary(tickerVolatility.data.change_summary);
     } catch (e) {
       console.error('Failed to fetch volatility data:', e);
     }
