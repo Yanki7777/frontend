@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Typography, Paper, Box } from '@mui/material';
 import { baseUrl } from '../utils/config';
-import { getFearAndGreed } from '../api';
 
 const Gauge = ({ value }) => {
   const needleStyle = {
@@ -67,9 +66,15 @@ const FearAndGreed = () => {
   useEffect(() => {
     const fetchGafIndex = async () => {
       try {
-        const data = await getFearAndGreed();
-        setGafIndex(data.gafIndex);
-        setLastUpdate(data.lastUpdate);  
+        const response = await axios.get(`${baseUrl}/fear_and_greed`);
+
+        if (response.status === 200) {
+          const data = response.data;
+          setGafIndex(data.gafIndex);
+          setLastUpdate(data.lastUpdate);  
+        } else {
+          setError('Unexpected response status: ' + response.status);
+        }
       } catch (err) {
         console.error('Error Getting G&F index:', err);
         setError('Failed to retrieve Fear and Greed index. Please try again later.');

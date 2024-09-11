@@ -8,7 +8,6 @@ import { YAnalisysVersion, baseUrl } from '../utils/config';
 import About from './About';
 import { Snackbar } from '@mui/material';
 import SettingsModal from './Settings';
-import { getNasdaqStatus } from '../api';
 const leftPages = []; // Reserved for future use
 const rightPages = ['Markets AI', 'Trade Settings', 'About'];
 const user_settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -64,9 +63,13 @@ const Header = ({ getMarketAI, loading, selectedUniverse }) => {
   useEffect(() => {
     const fetchNasdaqStatus = async () => {
       try {
-        const open = await getNasdaqStatus()
-        setNasdaqStatus(open ? 'Open' : 'Closed');
-  
+        const response = await axios.get(`${baseUrl}/nasdaq-status`);
+        if (response.status === 200) {
+          const status = response.data;
+          setNasdaqStatus(status.nasdaq_open ? 'Open' : 'Closed');
+        } else {
+          console.error('Error fetching NASDAQ status:', response);
+        }
       } catch (error) {
         console.error('Error fetching NASDAQ status:', error);
         setNasdaqStatus('Unavailable');

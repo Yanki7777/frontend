@@ -25,7 +25,7 @@ import TAAnalysisDisplay from './components/TAAnalysisDisplay';
 
 //utils
 import {
-
+  baseUrl,
   HISTORICAL_PERIOD,
   AI_ENABLED,
   INTERVALS,
@@ -33,11 +33,13 @@ import {
   DEFAULT_EXCHANGE,
   DEFAULT_SCREENER,
   ENABLE_ROTATOR,
+  ENABLE_MARKET_AI,
 }
   from './utils/config';
 
+// console.log('baseUrl:', baseUrl, 'HISTORICAL_PERIOD:', HISTORICAL_PERIOD, 'AI_ENABLED:', AI_ENABLED, 'INTERVALS:', INTERVALS, 'DEFAULT_TICKER:', DEFAULT_TICKER, 'DEFAULT_EXCHANGE:', DEFAULT_EXCHANGE, 'DEFAULT_SCREENER:', DEFAULT_SCREENER);
+
 import { getChartData } from './utils/ChartData';
-import { getMarketAI, getRealTimePrice, getTickerVolatility } from './api';
 
 ChartJS.register(
   CategoryScale,
@@ -57,9 +59,9 @@ function App() {
   const [screener, setScreener] = useState(DEFAULT_SCREENER);
   const [tickerInterval1, setTickerInterval1] = useState(INTERVALS.SHORT);
   const [tickerInterval2, setTickerInterval2] = useState(INTERVALS.LONG);
-  const [tickerInfo, setTickerInfo] = useState(null);
-  const [quote, setQuote] = useState(null);
-  const [tickerRealTimeData, setTickerRealTimeData] = useState(null);
+  const [yfInfo, setYfInfo] = useState(null);
+  const [fmpQuote, setFmpQuote] = useState(null);
+  const [tickerRTData, setTickerRTData] = useState(null);
   const [insiderTrading, setInsiderTrading] = useState(null);
   const [tradingViewAnalysis1, setTradingViewAnalysis1] = useState(null);
   const [tradingViewAnalysis2, setTradingViewAnalysis2] = useState(null);
@@ -101,8 +103,11 @@ function App() {
   useEffect(() => {
     const fetchRealTimeData = async () => {
       try {
-        const realTimeData = await getRealTimePrice(ticker, exchange);
-        setTickerRealTimeData(realTimeData);
+        // console.time('fmp-real-time-price');
+        const realTimeDataResponse = await axios.post(`${baseUrl}/fmp-real-time-price`, { ticker, exchange });
+        // console.timeEnd('fmp-real-time-price');
+        setTickerRTData(realTimeDataResponse.data.stock_data);
+        console.log('Fetched Real-Time Data:', realTimeDataResponse.data.stock_data);
       } catch (err) {
         console.error('Error fetching real-time data:', err);
         setError('Failed to fetch real-time ticker data.');
@@ -130,41 +135,51 @@ function App() {
     setError(null); // Clear previous errors
 
     try {
-      const tickerInfo = await getTickerInfo(ticker)
-      console.log(tickerInfo)
-      setTickerInfo(tickerInfo);
 
-      const quote = await getQuote(ticker)
-      setQuote(quote);
-
-      const realTimeData = await getRealTimePrice(ticker, exchange)
-      setTickerRealTimeData(realTimeData);
-
-      const tvAnalysis1 = await getTechnicalAnalysisTv(ticker, exchange, screener, tickerInterval1, AI_ENABLED)
-      setTradingViewAnalysis1(tvAnalysis1);
-
-      const tvAnalysis2 = await getTechnicalAnalysisTv(ticker, exchange, screener, tickerInterval2, AI_ENABLED)
-      setTradingViewAnalysis2(tvAnalysis2);
-
-      const taData1 = await getTechnicalAnalysis(ticker, tickerInterval1)
-      setTAData1(taData1);
-
-      const taData2 = await getTechnicalAnalysis(ticker, tickerInterval2)
-      setTAData2(taData2);
-
-      const historicalData = await getHistoricalData(ticker, HISTORICAL_PERIOD)
-      setHistoricalPrices(historicalData);
-
-      const newsSentiment = await getNewsSentiment(ticker)
-      setNewsSentiment(newsSentiment);
+      const [
+        yfInfoResponse,
+        fmpQuoteResponse,
+        realTimeDataResponse,
+        insiderTradingResponse,
+        tradingViewAnalysisResponse1,
+        tradingViewAnalysisResponse2,
+        taAnalysisResponse1,
+        taAnalysisResponse2,
+        historicalResponse,
+        newsSentimentResponse,
+      ] = await Promise.all([
+        axios.post(`${baseUrl}/yf-ticker-info`, { ticker }),
+        axios.post(`${baseUrl}/fmp-quote`, { ticker }),
+        axios.post(`${baseUrl}/fmp-real-time-price`, { ticker, exchange }),
+        axios.post(`${baseUrl}/ticker-insider-trading`, { ticker, type: 'all' }),
+        axios.post(`${baseUrl}/tradingview_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval1, AI: AI_ENABLED }),
+        axios.post(`${baseUrl}/tradingview_analyze_ticker`, { ticker, exchange, screener, tickerInterval: tickerInterval2, AI: AI_ENABLED }),
+        axios.post(`${baseUrl}/ta-analyze-ticker`, { ticker, tickerInterval: tickerInterval1 }),
+        axios.post(`${baseUrl}/ta-analyze-ticker`, { ticker, tickerInterval: tickerInterval2 }),
+        axios.post(`${baseUrl}/historical-data`, { ticker, period: HISTORICAL_PERIOD }),
+        axios.post(`${baseUrl}/news_sentiment`, { ticker }),
+      ]);
+      
+      setYfInfo(yfInfoResponse.data.ticker_info);
+      setFmpQuote(fmpQuoteResponse.data);
+      setTickerRTData(realTimeDataResponse.data.stock_data);
+      setInsiderTrading(insiderTradingResponse.data.insider_trading);
+      setTradingViewAnalysis1(tradingViewAnalysisResponse1.data);
+      setTradingViewAnalysis2(tradingViewAnalysisResponse2.data);
+      setTAData1(taAnalysisResponse1.data);
+      setTAData2(taAnalysisResponse2.data);
+      setHistoricalPrices({
+        data: historicalResponse.data.historical_data, period: HISTORICAL_PERIOD
+      });
+      setNewsSentiment(newsSentimentResponse.data);
 
       setShowTickerMenu(true); // Show the small ticker menu
 
     } catch (err) {
       setError(err.response?.data?.error || 'Analyze - Server error, please try again later.');
-      setTickerInfo(null);
-      setQuote(null);
-      setTickerRealTimeData(null);
+      setYfInfo(null);
+      setFmpQuote(null);
+      setTickerRTData(null);
       setTradingViewAnalysis1(null);
       setTradingViewAnalysis2(null);
       setTAData1(null);
@@ -176,12 +191,26 @@ function App() {
     }
   };
 
+
+
   const handleMarketAI = async () => {
     setMarketAiLoading(true);
     setError(null);
     try {
-      const response = await getMarketAI()
-      setMarketAI(response);
+      const response = await axios.get(`${baseUrl}/market_ai`);
+
+      if (response.status === 200) {
+        const marketAI = response.data;
+        setMarketAI(marketAI);
+
+        if (!marketAI) {
+          setError('No Market AI at this time.');
+        }
+      } else {
+        setError('Unexpected response status: ' + response.status);
+      }
+      setMarketAI(marketAI);
+
     } catch (err) {
       console.error('Error getting Market AI', err);
       setError('Failed to retrieve Market AI', err);
@@ -190,6 +219,9 @@ function App() {
       setMarketAiLoading(false);
     }
   };
+
+
+
 
   return (
     <>
@@ -287,19 +319,19 @@ function App() {
                     handleAnalyze={handleAnalyze}
                     showTickerMenu={showTickerMenu}
                     error={error}
-                    yfInfo={tickerInfo}
+                    yfInfo={yfInfo}
                     sx={{ flex: 1 }}
                   />
                 </Box>
 
 
                 <Grid marginTop={2} lg={12} item xs={12} md={6}>
-                  {tickerInfo && quote && (
+                  {yfInfo && fmpQuote && (
                     <TickerInfoDisplay
                       ticker={ticker}
-                      yfInfo={tickerInfo}
-                      fmpQuote={quote}
-                      tickerRTData={tickerRealTimeData}
+                      yfInfo={yfInfo}
+                      fmpQuote={fmpQuote}
+                      tickerRTData={tickerRTData}
                       loading={tickerAnalysisLoading}
                     />
                   )}
@@ -336,13 +368,13 @@ function App() {
             </Grid>
             <Grid item lg={4} xs={12} md={6}>
               <Box display="flex" height="100%">
-                {/* <TickerChart
+                <TickerChart
                   setHistoricalPrices={setHistoricalPrices}
                   chartData={chartData}
                   loading={tickerAnalysisLoading}
                   ticker={ticker}
                   sx={{ flex: 1 }}
-                /> */}
+                />
               </Box>
             </Grid>
           </Grid>

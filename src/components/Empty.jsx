@@ -2,6 +2,9 @@ import React from 'react';
 import { Box, Typography, Paper } from '@mui/material';
 
 function Empty({ tickerInfo }) {
+
+
+    console.log(tickerInfo);
     return (
         <Paper elevation={3} style={{
             minHeight: '100%',

@@ -3,7 +3,6 @@ import axios from 'axios';
 import React, { useEffect, useState, useCallback } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import { baseUrl } from '../utils/config';
-import { getHistoricalData } from '../api';
 
 const TickerChart = ({ chartData, setHistoricalPrices, ticker, loading }) => {
   const [period, setPeriod] = useState('1d');
@@ -12,7 +11,7 @@ const TickerChart = ({ chartData, setHistoricalPrices, ticker, loading }) => {
 
   const updateHistoricalPrices = useCallback(async () => {
     try {
-      const res = await getHistoricalData(ticker, period);
+      const res = await axios.post(`${baseUrl}/historical-data`, { ticker, period });
       setHistoricalPrices({ data: res.data.historical_data, period });
     } catch (e) {
       console.error('Failed to fetch historical data:', e);
@@ -21,18 +20,22 @@ const TickerChart = ({ chartData, setHistoricalPrices, ticker, loading }) => {
 
   const fetchMACDData = useCallback(async () => {
     setMacdLoading(true);
+    console.log('Fetching MACD data for', ticker, ' period', period);
     try {
       const res = await axios.post(`${baseUrl}/ta-macd-data`, {
         ticker,
         period: period
       });
+
       const macdData = res.data.macd_data.map(item => ({
         timestamp: item.timestamp,
         MACD: item.MACD,
-        // MACD_Signal: item.MACD_Signal,
+        MACD_Signal: item.MACD_Signal,
         MACD_Hist: item.MACD_Hist
       }));
+
       setMacdData(macdData);
+      console.log('MACD Data:', macdData);
     } catch (e) {
       console.error('Failed to fetch MACD data:', e);
     } finally {

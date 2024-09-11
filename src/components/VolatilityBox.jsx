@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Box, CircularProgress, Paper, Select, MenuItem, FormControl, InputLabel, Button, TextField } from '@mui/material';
-import { getTickerVolatility } from '../api';
+import axios from 'axios';
+import { baseUrl } from '../utils/config';
 
 function VolatilityBox() {
   const [ticker, setTicker] = useState('SPY');
@@ -14,7 +15,7 @@ function VolatilityBox() {
     setLoading(true);
     setError('');
     try {
-      const res = await getTickerVolatility(ticker, period, interval);
+      const res = await axios.post(`${baseUrl}/ticker-volatility`, { ticker, period, interval });
       setData(res.data);
     } catch (e) {
       setError('Failed to fetch volatility data.');
