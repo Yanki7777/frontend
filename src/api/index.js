@@ -1,7 +1,9 @@
 import axios from "axios";
 
+// FASTAPI
 const BASE_URL = "http://localhost:8000/api/v1";
 
+// GET request
 async function get(endpoint, params = {}) {
   const res = await axios.get(BASE_URL + endpoint, {
     params,
@@ -15,6 +17,7 @@ async function get(endpoint, params = {}) {
   return res.data;
 }
 
+// POST request
 async function post(endpoint, data) {
   const res = await axios.post(BASE_URL + endpoint, data, {
     headers: {
@@ -28,6 +31,7 @@ async function post(endpoint, data) {
   return res.data;
 }
 
+// DELETE request
 async function del(endpoint) {
   const res = await axios.delete(BASE_URL + endpoint);
   if (res.status >= 300) {
@@ -35,12 +39,18 @@ async function del(endpoint) {
   }
 }
 
+// --------------------------  Tickers  --------------------------
+
+// getTickerInfo
+// YFinance
 export async function getTickerInfo(ticker) {
   const endpoint = `/tickers/info/${ticker}`;
   const data = get(endpoint);
   return data;
 }
 
+// getTickerVolatility
+// YFinance
 export async function getTickerVolatility(ticker, period, interval) {
   const endpoint = `/tickers/volatility/${ticker}`;
   const params = {
@@ -51,6 +61,8 @@ export async function getTickerVolatility(ticker, period, interval) {
   return data;
 }
 
+// getTickerHistoricalData
+// YFinance
 export async function getHistoricalData(ticker, period) {
   const endpoint = `/tickers/historical-data/${ticker}`;
   const params = {
@@ -60,12 +72,16 @@ export async function getHistoricalData(ticker, period) {
   return data;
 }
 
+// getNewsSentiment
+// Alpha Vantage
 export async function getNewsSentiment(ticker) {
   const endpoint = `/tickers/news-sentiment/${ticker}`;
   const data = get(endpoint);
   return data;
 }
 
+// getRealTimePrice
+// FMP
 export async function getRealTimePrice(ticker, exchange) {
   const endpoint = `/tickers/real-time-price/${ticker}`;
   const params = {
@@ -75,12 +91,19 @@ export async function getRealTimePrice(ticker, exchange) {
   return data;
 }
 
+// getQuote
+// FMP
 export async function getQuote(ticker) {
   const endpoint = `/tickers/quotes/${ticker}`;
   const data = get(endpoint);
   return data;
 }
 
+// -----------------------  Technical Analysis  -----------------------
+
+// getTechnicalAnalysisTv
+// TradingView
+// OpenAI prompts
 export async function getTechnicalAnalysisTv(
   ticker,
   exchange,
@@ -99,6 +122,9 @@ export async function getTechnicalAnalysisTv(
   return data;
 }
 
+// getTechnicalAnalysisTa
+// YFinance
+// TA
 export async function getTechnicalAnalysisTa(ticker, interval) {
   const endpoint = `/technical-analysis/ta/${ticker}`;
   const params = {
@@ -113,49 +139,33 @@ export async function getTechnicalAnalysisTa(ticker, interval) {
   };
 }
 
+// --------------------------  Market  --------------------------
+
+// getFearAndGreed
+// FearAndGreed
 export async function getFearAndGreed() {
   const endpoint = "/market/fear-and-greed";
   const data = get(endpoint);
   return data;
 }
 
+// getNasdaqStatus
+// FMP
 export async function getNasdaqStatus() {
   const endpoint = "/market/status/nasdaq";
   const data = get(endpoint);
   return data;
 }
 
+// --------------------------  AI  --------------------------
+
+// getMarketAI
+// OpenAI
 export async function getMarketAI() {
   const endpoint = "/ai/market";
   const data = get(endpoint);
   return data;
 }
-
-export async function getUniverses() {
-  const endpoint = "/universes";
-  const data = get(endpoint);
-  return data;
-}
-
-export async function getInsiderTradingTicker(ticker, type = "all") {
-  const endpoint = `/insider-trading/ticker/${ticker}`;
-  const params = {
-    type,
-  };
-  const data = await get(endpoint, params);
-  return data;
-}
-
-export async function getInsiderTradingUniverse(universeId, type = "all") {
-  const endpoint = `/insider-trading/universe/${universeId}`;
-  const params = {
-    type,
-  };
-  const data = await get(endpoint, params);
-  return data;
-}
-
-export async function buildPortfolio() {}
 
 export async function chat(message, context) {
   const endpoint = "/ai/chat";
@@ -168,3 +178,42 @@ export async function resetChat() {
   const data = await del(endpoint);
   return data;
 }
+
+
+// -------------------------  Universes -------------------------
+
+export async function getUniverses() {
+  const endpoint = "/universes";
+  const data = get(endpoint);
+  return data;
+}
+
+
+// ----------------------  Insider Trading ----------------------
+
+// getInsiderTradingTicker
+// FMP  
+export async function getInsiderTradingTicker(ticker, type = "all") {
+  const endpoint = `/insider-trading/ticker/${ticker}`;
+  const params = {
+    type,
+  };
+  const data = await get(endpoint, params);
+  return data;
+}
+
+// getInsiderTradingUniverse
+// FMP
+export async function getInsiderTradingUniverse(universeId, type = "all") {
+  const endpoint = `/insider-trading/universe/${universeId}`;
+  const params = {
+    type,
+  };
+  const data = await get(endpoint, params);
+  return data;
+}
+
+// ------------------------  Portfolio ------------------------
+
+export async function buildPortfolio() {}
+
