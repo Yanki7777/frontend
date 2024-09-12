@@ -6,14 +6,24 @@ import './TickerRotator.css';
 import TickerModal from './TickerModal';
 import {getQuote} from "../api"
 
-const rTickers = ['SPY', 'QQQ', 'MSFT', 'AMZN', 'TSLA', 'NVDA', ];
+const rTickers = ['SPY', 'QQQ', 'MSFT', 'AMZN', 'TSLA','NVDA', 'GBTC', 'ETHE', 'BTC-USD' ];
+
+// FLASK or FASTAPI
+const server = "FASTAPI";
 
 const fetchStockData = async (ticker) => {
+    let response;
+    let price, change, changesPercentage, previousClose, priceAvg50, timestamp, earningsAnnouncement;
+
     try {
-        const response = await axios.post(`${baseUrl}/fmp-quote`, { ticker });     
-        const response1 = await getQuote(ticker);
-        console.log(response1);
-        const { price, change, changesPercentage, previousClose, priceAvg50, timestamp, earningsAnnouncement } = response.data.fmp_quote;
+        if (server === "FLASK") {       
+            response = await axios.post(`${baseUrl}/fmp-quote`, { ticker });   
+            ({ price, change, changesPercentage, previousClose, priceAvg50, timestamp, earningsAnnouncement } = response.data.fmp_quote);
+        
+        } else if (server === "FASTAPI") {
+            response = await getQuote(ticker);     
+            ({ price, change, changesPercentage, previousClose, priceAvg50, timestamp, earningsAnnouncement } = response);
+        }               
 
         return {
             ticker,
@@ -39,6 +49,7 @@ const fetchStockData = async (ticker) => {
         };
     }
 };
+
 
 const getPriceColor = (price, previousClose) => {
     if (price === "N/A" || previousClose === "N/A") return '#ffffff';
